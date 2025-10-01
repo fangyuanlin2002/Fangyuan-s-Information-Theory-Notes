@@ -1,0 +1,162 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Introduction}
+\begin{itemize}
+    \item Discretization of time: sample time intervals. The samples replace idealized models. Simple arithmetics replaces calculus.
+    \item Discretization of values: general-pupose storage and processing. Noise can be controlled.
+\end{itemize}
+
+\section{Discrete-time signals}
+\subsection{Examples}
+\begin{itemize}
+    \item Circa 2500 BC, the floods of the Nile each year were recorded as discrete-time signals.
+    \item Other examples include monthly temperature, yearly world population.
+\end{itemize}
+
+\begin{gbox}{Discrete-Time Signal}
+Discrete-time signal is a sequence of number complex numbers denoted as $x[n]$,
+where \begin{enumerate}
+    \item $x:\bZ \to \bC$ is a two-sided sequence.
+    \item $n$ is $a$-dimensional "time"
+    \item In an analysis process, it is periodic measurement.
+    \item In a synthesis process, it is a stream of generated samples.
+\end{enumerate}
+\end{gbox}
+\begin{pbox}{Delta Signal}
+    The simplest discrete-time signal is the Delta signal $x[n]=\delta[n]$, where every sample is $0$ except for $\delta[0]=1$. For example, when shooting a movie, the video and audio are recorded separately, so we need to synchronize two tracks together.
+    People film the clapper and when the top part slams down on the bottom part, this generates a very short instantaneous sound - this gives a delta signal.
+\end{pbox}
+\begin{pbox}{The unit step}
+    \[
+    x[u] = \begin{cases}
+        0 \quad u<0\\
+        =1 \quad u\geq 0
+    \end{cases}
+    \]
+    This can model a switch.
+\end{pbox}
+\begin{pbox}{The exponential decay}
+    \[
+    x[n] = |a|^n u[n]
+    \]
+    This models how your coffee gets cold. This is governed by a differential equation \[
+    \frac{\dd T}{\dd t}=-c(T-T_{env})
+    \] where the solution is \[
+    T(t)=T_{env}+(T_0-T_{env})e^{-ct}
+    \] assuming there's only convection and container has good conductivity.
+\end{pbox}
+\begin{pbox}{The sinusoid}
+    \[
+    x[n] = \sin(\omega_0 n +\theta)
+    \]
+\end{pbox}
+\subsection{Categories in terms of length}
+Finite-length and infinite-length signals
+\begin{itemize}
+    \item For finite-length signals, we look at $x[n]$ where $n=0,1,2,\dots, N-1$
+    \item They are good for numerical packages.
+    \item For infinite-length signals, we consider $x[n]$, $n\in \bZ$
+    \item They are good for theorems.
+\end{itemize}
+Periodic signals and finite-support signals
+\begin{itemize}
+    \item N-periodic sequence: $\Tilde{x}[n]=\Tilde{x}[n+kNm$, $n,k,N\in \bZ$
+    \item It has the same amount of information as a finite-length signal of length $N$.
+    \item Finite-support sequence is only non-zero on a finite interval on $\Z$ of some length $N$ and contains the same information as a finite-length signal of length $N$.
+\end{itemize}
+Following are some elementary operations on the signals:\begin{itemize}
+    \item Scaling, sum, product, shift by $k$ (delay).
+\end{itemize}
+\begin{gbox}{Energy and Power of a discrete-time signal}
+    The energy of $x[n]$ is \[
+    E_x = \sum_{n=-\infty}^\infty |x[n]|^2
+    \]
+    The power of is \[
+    P_x = \lim_{N\to \infty} \frac{1}{2N+1}\sum_{-N}^N |x[n]|^2
+    \]
+    \begin{itemize}
+        \item Many signals have infinite energy, e.g. periodic signal, but many of them have finite power.
+    \end{itemize}
+\end{gbox}
+\section{How computer playis discrete-time sounds}
+\begin{itemize}
+    \item Our ears are analog devices and the computer is a digital device.
+    \item For example, we can take a sinusoid $x[n]=\sin(\omega_0 n +\theta)$.
+    \item In digital signal, $n$ is just a counter and the period is how many samples before pattern repeats. In the physical world, the period is the number of seconds before pattern repeats and the frequency is measured in Hz.
+    \item The computer bridges the gap with a sound card, a device that takes a series of samples and builds an electric signal that we can feed to a speaker. Inside the sound card, there is a system clock with a period $T_s$ (time between samples) measured in seconds.
+    \item Usually we consider $F_s =\frac{1}{T_s}$ as the number of samples per seconds. e.g. a typical $F_s$ would be 48000, $T_s\approx 20.8\mu s$. If we have a sinusoid with a period of $M=110$ samples. If we feed the sinusoid to a sound card at 48 kHz. We would get sinusoid with a pitch of 440Hz ($f=\frac{F_s}{M}$).
+\end{itemize}
+\section{The Karplus-Strong Algorithm}
+\begin{itemize}
+    \item We have several building blocks to process the signals, e.g. adder, scalar multiplier, unit delayer (keep the current value in storage and output the previous sample value, denoted $x[n]\to z^{-N}\to x[n-N]$).
+    \item The moving average: \[
+    y[n] = \frac{x[n]+x[n-1]}{2}
+    \] can be constructed with our building blocks. It smooths the transition point of uniform signal. For sinusoid, it doesn't change frequency, but just add a phase term to the shape. If we apply to the alternating signal, then we get the zero signal.
+\end{itemize}
+\section{The Karplous-Strong Algorithm to Play Sounds}
+\begin{itemize}
+    \item To create a loop: let $y[n]=\alpha y[n-M]+x[n]$
+    \item $y[n]$ is the output, $M$ is the delay, $x[n]$ is the input.
+\end{itemize}
+\begin{pbox}{Playing a sound}
+    \[
+    y[n]=\alpha y[n-M]+x[n]
+    \]
+    \begin{itemize}
+        \item Choose $M=100$ samples, $\alpha = 1$(decay factor = 1 means no decay), $x[n]=\sin(2\pi n/100)$ for $0\leq n\leq 100$ and zero elsewhere.
+        \item It we play this waveform with a sampling frequency of 48kHz, then we have 48k samples per second, and the pattern repeats every 100 samples, so the resulting pitch will be 480 Hz.
+        \item $M$ controls the frequency (pitch)
+        \item $\alpha$ controls envelope (decay)
+        \item $X[n]$ controls color $(timbre)$.
+        \item To sound like a violin, we can choose $x[n]$ as the zero-mean sawtooth wave between $0$ and $99$ and zero elsewhere.
+    \end{itemize}
+\end{pbox}
+\section{Complex Exponential}
+\begin{remark}
+    Oscillations are everywhere.
+    \begin{itemize}
+        \item Sustainable dynamic systems exhibit oscillatory behavior.
+        \item Intuitively, things that don't move periodically don't last, e.g. bombs, rockets, human beings.
+    \end{itemize}
+\end{remark}
+\begin{pbox}{The discrete-time oscillatory heartbeat}
+\begin{itemize}
+    \item Frequency $\omega$ in randians
+    \item An initial phase $\phi$ in randians
+    \item An amplitude $A$
+    \item \[
+    x[n] = A e^{i(\omega n+\phi)}
+    \]
+    \item This simplifies things - trigonometry becomes algebra.
+\end{itemize}
+\end{pbox}
+\begin{pbox}{The complex exponential generating machine}
+\begin{itemize}
+    \item $x[n]=e^{i\omega n}$
+    \item $x[n+1]=e^{i\omega}x[n]$
+    \item Note that note every sinusoid is periodic in discrete time.
+
+\begin{bbox}{Periodicity of sinusoid}
+    $e^{i\omega n}$ is periodic in $n$ if and only $\omega = \frac{M}{N}2\pi,M,N\in \mathbb{N}$.
+\end{bbox}
+    \item If we want $x[n]=x[n+N]$, then we can solve that $\omega = \frac{M}{N}2\pi$ for any $M$.
+     \item Aliasing: one point has multiple names, e.g. equivalence class mod $2\pi$
+    \end{itemize}
+   
+\end{pbox}
+\section{Example: Goethes's Temperature Measurement}
+\begin{itemize}
+    \item German wirter Jognn Wolfgang von Goethe. He also had an interest in science. He constantly recorded the weather in his city.
+    \item The signal we look at is the mean annual temperature in the city of Yena. 
+    \item Each year corresponds to a sample of a digital signal.
+    \item Smoothing the time-series: compute the moving average: \[
+    y[n]=\frac{1}{N}\sum_{m=0}^{N-1}x(n-m)
+    \] where $N$ is the window of last observations over which average is computed.
+    \item \begin{align*}
+        y[n] &= \frac{1}{N}\sum+{m=0}^{N-1}x(n-m)\\
+        &=\frac{1}{N}x[n] + \frac{1}{N}\sum_{m=0}^{N-1}x(n-m) + \frac{1}{N}x[n-N]-\frac{1}{N}x[n-N]\\
+        &=y[n-1]+\frac{1}{N}(x[n]-x[n-N]) \quad \text{A recursive formula}
+    \end{align*}
+    \item After smoothing, we averaged out the small variation and we see global warming.
+\end{itemize}
+\end{document}

@@ -1,0 +1,317 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 15}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+
+\subsection*{11.5 Computing an integral}
+Show that $R_{ii'}(0)=\int_{-\infty}^\infty G_i(f)G^*_i(f)\dd f = 0$.
+\begin{proof}
+    \begin{align*}
+        R_ii'(0) &= \int_{-\infty}^\infty G_i(f)g_{i'}^*(f)\dd f\\
+        &=\left(\frac{1}{2W}\right)^2\int_{-W}^W e^{-j2\pi f\left(\frac{i'-i}{2W}\right)}\dd f \quad\text{(here we use $j$ to represent $\sqrt{-1}$)}\\
+    \end{align*}
+    \begin{itemize}
+        \item If $i=i'$, then \[
+        R_ii'(0)=\left(\frac{1}{2W}\right)^2\int_{-W}^W 1 \dd f=\frac{1}{2W} \neq 0
+        \]
+        \item If $i\neq i'$: \begin{align*}
+            &\left(\frac{1}{2W}\right)^2\int_{-W}^W e^{-j2\pi f\left(\frac{i'-i}{2W}\right)}\dd f\\
+            &= \frac{e^{-j 2\pi W A} - e^{j 2\pi W A}}{-j 2\pi A}\\
+            &= \frac{\sin\left(\pi (i' - i)\right)}{2W \pi (i' - i)} \quad \text{by Euler's formula}\\
+            &= 0 \quad\text{for $i\neq i'$}
+        \end{align*}
+    \end{itemize}
+\end{proof}
+\subsection*{11.8 Simitry of PSD for wide-sense stationary process}
+Show that for a wide-sense stationary process $X(t)$,
+\[
+S_X(f) = S_X(-f)
+\] for all $f$.
+\begin{proof}
+    \begin{align*}
+        R_X(-\tau) &= \bE [X(t-\tau)X(t)]\\
+        &= \bE[X(t-\tau)X(\tau + (t-\tau))]\\
+        &= \bE [X(t+\tau) X(t)] = R_X(\tau)
+    \end{align*}
+    where the last step follows from stationarity.
+    \newline
+    Therefore,
+    \begin{align*}
+        S_X(-f) &= \int_{-\infty}^\infty R_X(\tau) e^{j2\pi f\tau} \dd \tau \\
+        &=\int_{-\infty}^\infty R_X(-u) e^{-j2\pi fu} \dd u\\
+        &=\int_{-\infty}^\infty R_X(u) e^{-j2\pi fu} \dd u\\
+        &= S_X(f)
+    \end{align*}
+\end{proof}
+\subsection*{11.9 Gaussian Noise and Impulses}
+Consider a zero-mean white Gaussian noise process $Z(t)$. Let $h_1(t)$ and $h_2(t)$ be two impulse responses such that the supports of $H_1(f)$
+and $H_2(f)$ do not overlap.
+\begin{enumerate}
+    \item[(a)] Show that for any $t$ and $t'$, the two random variables $Z(t) * h_1(t)$
+    and $Z(t') * h_2(t')$ are independent.
+    
+    \item[(b)] Show that the two processes $Z(t) * h_1(t)$ and $Z(t) * h_2(t)$ are
+    independent.
+    
+    \item[(c)] Repeat a) and b) if $Z(t)$ is a zero-mean colored Gaussian noise
+    process. \textit{Hint:} Regard $Z(t)$ as obtained by passing a zero-mean
+    white Gaussian noise process through a coloring filter.
+\end{enumerate}
+
+\begin{proof}
+    
+
+First, we assume without loss of generality that $Z(t)$ has unit power spectral density:
+\[ S_Z(f) = 1 \text{ for all } f \]
+This means its autocorrelation is a Dirac delta function:
+\[ R_Z(\tau) = \delta(\tau) \]
+(Recall that white noise has constant power across all frequencies, and delta function autocorrelation means the noise is uncorrelated at different times.)
+
+Define the filtered processes:
+\[ Y_1(t) = Z(t) * h_1(t) \]
+\[ Y_2(t) = Z(t) * h_2(t) \]
+The convolution $*$ represents filtering $Z(t)$ through systems with impulse responses $h_1$ and $h_2$.
+
+Compute the cross-correlation between $Y_1$ and $Y_2$:
+\begin{align*}
+R_{Y_1Y_2}(\tau) &= E[Y_1(t+\tau)Y_2(t)] \\
+&= E\left[\left(\int Z(u)h_1(t+\tau-u)du\right)\left(\int Z(v)h_2(t-v)dv\right)\right]
+\end{align*}
+(We wrote the convolutions as integrals showing how $Z$ is weighted by the impulse responses.)
+
+Bring expectation inside (valid by Fubini's theorem):
+\[ = \iint E[Z(u)Z(v)]h_1(t+\tau-u)h_2(t-v)dudv \]
+
+Since $E[Z(u)Z(v)] = \delta(u-v)$ for white noise:
+\[ = \iint \delta(u-v)h_1(t+\tau-u)h_2(t-v)dudv \]
+The delta function $\delta(u-v)$ "picks out" only the terms where $u=v$.
+
+Integrate over $u$ using the delta function property:
+\[ = \int h_1(t+\tau-v)h_2(t-v)dv \]
+
+Change variables $w = t-v$ (so $dv = -dw$):
+\[ = \int h_1(\tau + w)h_2(w)dw \]
+
+Recognize this as a convolution:
+\[ = h_1(\tau) * h_2(-\tau) \]
+
+In frequency domain, convolution becomes multiplication:
+\[ \mathcal{F}\{h_1(\tau)*h_2(-\tau)\} = H_1(f)H_2(-f) = H_1(f)H_2^*(f) \]
+(since $h_2$ is real-valued, $H_2(-f) = H_2^*(f)$)
+
+By assumption, $H_1(f)$ and $H_2(f)$ have non-overlapping support, so:
+\[ H_1(f)H_2^*(f) = 0 \text{ for all } f \]
+
+Therefore:
+\[ R_{Y_1Y_2}(\tau) = 0 \text{ for all } \tau \]
+This means $Y_1(t)$ and $Y_2(t')$ are uncorrelated for any $t,t'$.
+
+Since $Z(t)$ is Gaussian and filtering is linear, $Y_1(t)$ and $Y_2(t')$ are jointly Gaussian. For Gaussian random variables, uncorrelated implies independent.
+
+Thus we've shown $Z(t)*h_1(t)$ and $Z(t')*h_2(t')$ are independent for any $t,t'$.
+
+
+For part b,
+We now extend part (a) to show the entire processes are independent.
+
+To show processes are independent, we must show any finite collections of samples are independent. Consider:
+\[ \mathbf{Y}_1 = [Y_1(t_1),\ldots,Y_1(t_m)]^\top \]
+\[ \mathbf{Y}_2 = [Y_2(t'_1),\ldots,Y_2(t'_n)]^\top \]
+
+The joint vector $\mathbf{Y} = [\mathbf{Y}_1^\top \mathbf{Y}_2^\top]^\top$ is Gaussian since it comes from linear operations on Gaussian noise.
+
+Its probability density function is:
+\[ f_{\mathbf{Y}}(\mathbf{y}) = \frac{1}{(2\pi)^{(m+n)/2}|\mathbf{K}|^{1/2}}\exp\left(-\frac{1}{2}\mathbf{y}^\top\mathbf{K}^{-1}\mathbf{y}\right) \]
+
+From part (a), the cross-correlation between any $Y_1(t_i)$ and $Y_2(t'_j)$ is zero, so the covariance matrix is block diagonal:
+\[ \mathbf{K} = \begin{bmatrix} \mathbf{K}_1 & \mathbf{0} \\ \mathbf{0} & \mathbf{K}_2 \end{bmatrix} \]
+where $\mathbf{K}_1$ is the covariance of $\mathbf{Y}_1$ and $\mathbf{K}_2$ of $\mathbf{Y}_2$.
+
+The determinant and inverse also become block diagonal:
+\[ |\mathbf{K}| = |\mathbf{K}_1||\mathbf{K}_2| \]
+\[ \mathbf{K}^{-1} = \begin{bmatrix} \mathbf{K}_1^{-1} & \mathbf{0} \\ \mathbf{0} & \mathbf{K}_2^{-1} \end{bmatrix} \]
+
+Therefore the exponent in the PDF separates:
+\[ \mathbf{y}^\top\mathbf{K}^{-1}\mathbf{y} = \mathbf{y}_1^\top\mathbf{K}_1^{-1}\mathbf{y}_1 + \mathbf{y}_2^\top\mathbf{K}_2^{-1}\mathbf{y}_2 \]
+
+Thus the joint PDF factors:
+\[ f_{\mathbf{Y}}(\mathbf{y}) = f_{\mathbf{Y}_1}(\mathbf{y}_1)f_{\mathbf{Y}_2}(\mathbf{y}_2) \]
+proving independence of $\mathbf{Y}_1$ and $\mathbf{Y}_2$.
+
+Since this holds for any finite collections, the processes are independent.
+
+
+
+Now consider colored noise $Z(t)$ with non-constant power spectral density.
+
+We can model colored noise as white noise passed through a "coloring filter" $g(t)$:
+\[ Z(t) = Z_0(t) * g(t) \]
+where $Z_0(t)$ is white noise with $S_{Z_0}(f) = 1$.
+
+The filtering operation becomes:
+\[ Z(t)*h_1(t) = (Z_0(t)*g(t))*h_1(t) = Z_0(t)*(g(t)*h_1(t)) \]
+Let $h'_1(t) = g(t)*h_1(t)$.
+
+ Similarly define $h'_2(t) = g(t)*h_2(t)$. 
+
+The frequency responses satisfy:
+\[ H'_1(f) = G(f)H_1(f) \]
+\[ H'_2(f) = G(f)H_2(f) \]
+
+Since $H_1(f)$ and $H_2(f)$ originally had non-overlapping support, and multiplication by $G(f)$ doesn't create overlap, $H'_1(f)$ and $H'_2(f)$ still don't overlap.
+
+Now we've reduced the problem to the white noise case from parts (a) and (b), with $h'_1$ and $h'_2$ as the new filters.
+
+Thus all previous conclusions hold for the colored noise case.
+
+\end{proof}
+
+
+\subsection*{11.10 Bandpass White Gaussian as Bandlimited Colored Gaussian}
+ Interpret the bandpass white Gaussian channel as a special case of the bandlimited colored Gaussian channel in terms of the channel capacity.
+
+\begin{proof}
+
+We show the bandpass white Gaussian channel is a special case of the colored channel.
+
+Define a colored noise $Z''(t)$ with power spectral density:
+\[ S_{Z''}(f) = \begin{cases}
+\infty & |f| < f_l \\
+N_0/2 & f_l \leq |f| \leq f_h \\
+0 & \text{otherwise}
+\end{cases} \]
+The infinite power at low frequencies makes these frequencies unusable.
+
+The usable bandwidth is $W = f_h - f_l$.
+
+Using water-filling (the optimal power allocation for colored noise), all power $P$ will be allocated equally to the band where $S_{Z''}(f) = N_0/2$.
+
+The capacity becomes:
+\[ C = \frac{1}{2}\int_{-f_h}^{-f_l} \log\left(1 + \frac{P/2W}{N_0/2}\right)df + \frac{1}{2}\int_{f_l}^{f_h} \log\left(1 + \frac{P/2W}{N_0/2}\right)df \]
+
+Both integrals are equal by symmetry, so:
+\[ C = 2 \times \frac{1}{2} \times W \log\left(1 + \frac{P}{N_0W}\right) = W\log\left(1 + \frac{P}{N_0W}\right) \]
+
+This exactly matches the capacity formula for a bandpass white Gaussian channel with bandwidth $W$ and noise power $N_0/2$.
+
+\end{proof}
+
+
+\subsection*{11.11 Independent Gaussian Noise is the Worst}
+\begin{proof}
+We justify why independent Gaussian noise components are the "worst case."
+
+Let $\mathbf{X} = [X_1,\ldots,X_k]^\top$ with independent $X_i \sim \mathcal{N}(0,P_i^*)$.
+
+The mutual information between input $\mathbf{X}$ and output $\mathbf{Y} = \mathbf{X} + \mathbf{Z}$ is:
+\[ I(\mathbf{X};\mathbf{Y}) = h(\mathbf{Y}) - h(\mathbf{Y}|\mathbf{X}) = h(\mathbf{Y}) - h(\mathbf{Z}) \]
+
+Using the chain rule for differential entropy:
+\[ h(\mathbf{Y}) = \sum_{i=1}^k h(Y_i|Y_1,\ldots,Y_{i-1}) \]
+
+Conditioning reduces entropy, so:
+\[ h(Y_i|Y_1,\ldots,Y_{i-1}) \leq h(Y_i) \]
+Thus:
+\[ h(\mathbf{Y}) \leq \sum_{i=1}^k h(Y_i) \]
+
+Therefore:
+\[ I(\mathbf{X};\mathbf{Y}) \leq \sum_{i=1}^k h(Y_i) - h(\mathbf{Z}) \]
+
+When $\mathbf{Z}$ has independent components:
+\[ h(\mathbf{Z}) = \sum_{i=1}^k h(Z_i) \]
+and the inequality becomes equality:
+\[ I(\mathbf{X};\mathbf{Y}) = \sum_{i=1}^k I(X_i;Y_i) \]
+
+Thus for any noise correlation structure:
+\[ C \geq \sum_{i=1}^k \frac{1}{2}\log\left(1 + \frac{P_i^*}{N_i}\right) \]
+with equality when noise components are independent.
+
+This shows independent Gaussian noise gives the worst (lowest) capacity.
+\end{proof}
+
+
+
+\subsection*{Data Processing Inequality for Informational Divergence Part 1}
+
+Let $X,X',Y,Y'$ be discrete random variables with $\mathcal X=\mathcal X'$ and $\mathcal Y=\mathcal Y'$ such that
+\[
+p_{XY}(x,y)=p_X(x)\,w(y\mid x),
+\qquad
+p_{X'Y'}(x,y)=p_{X'}(x)\,w(y\mid x),
+\]
+where $w(\cdot\mid\cdot)$ is a transition matrix from $\mathcal X$ to $\mathcal Y$.  
+\begin{enumerate}
+\item[(a)] Prove that
+\[D\bigl(p_{XY}\Vert p_{X'Y'}\bigr) 
+= D\bigl(p_X\Vert p_{X'}\bigr).
+\]
+\item[(b)] Prove that
+\[D\bigl(p_X\Vert p_{X'}\bigr) \ge D\bigl(p_Y\Vert p_{Y'}\bigr).
+\]
+\emph{Hint: First show }$D(p_{XY}\Vert p_{X'Y'})\ge D(p_Y\Vert p_{Y'})$.
+\end{enumerate}
+
+\begin{proof}
+Part a:
+
+By definition of KL divergence,
+\[
+D(p_{XY}\Vert p_{X'Y'})
+= \sum_{x,y} p_{XY}(x,y) \log \frac{p_{XY}(x,y)}{p_{X'Y'}(x,y)}
+= \sum_{x,y} p_X(x)\,w(y\mid x) \log \frac{p_X(x)\,w(y\mid x)}{p_{X'}(x)\,w(y\mid x)}.
+\]
+Because $w(y\mid x)>0$ whenever $p_X(x)w(y|x)>0$, the $w(y\mid x)$ factors cancel inside the log:
+\[
+= \sum_{x,y} p_X(x)\,w(y\mid x) \log \frac{p_X(x)}{p_{X'}(x)}
+= \sum_x p_X(x) \log \frac{p_X(x)}{p_{X'}(x)} \sum_y w(y\mid x)
+= D(p_X\Vert p_{X'}),
+\]
+since $\sum_y w(y\mid x)=1$ for each $x$.
+
+
+Part b:
+
+We apply the log-sum inequality (or directly sum out $x$) to get
+\[
+D(p_{XY}\Vert p_{X'Y'})
+= \sum_{y}\sum_x p_{XY}(x,y) \log \frac{p_{XY}(x,y)}{p_{X'Y'}(x,y)}
+\]
+\[
+\ge \sum_y \Bigl(\sum_x p_{XY}(x,y)\Bigr) \log \frac{\sum_x p_{XY}(x,y)}{\sum_x p_{X'Y'}(x,y)}
+= D(p_Y\Vert p_{Y'}).
+\]
+Combining this with part~(a),
+\[
+D(p_X\Vert p_{X'})=D(p_{XY}\Vert p_{X'Y'})\ge D(p_Y\Vert p_{Y'}),
+\]
+which is the desired inequality.
+\end{proof}
+
+
+\subsection*{Data Processing Inequality for Informational Divergence Part 2}
+
+Using the result of Problem~1, prove that if $X\to Y\to Z$ is a Markov chain, then
+\[I(X;Z) \le I(X;Y).
+\]
+
+
+\begin{proof}
+Recall the identity $I(U;V)=D(p_{UV}\Vert p_U\,p_V)$.  Since $X\to Y\to Z$,
+we can view the joint $(X,Y)$ and the product distribution $p_X p_Y$ as inputs to the same channel $w(z|y)$ producing $Z$.  Concretely,
+\[
+p_{XZ}(x,z) = \sum_y p_{XY}(x,y)\,w(z\mid y),
+\qquad
+p_X(x)p_Z(z) = \sum_y p_X(x)p_Y(y)\,w(z\mid y).
+\]
+Applying Problem~1(b) to the pair $(p_{XY},\,p_X p_Y)$ under the channel $w(z\mid y)$ gives
+\[
+D\bigl(p_{XY}\Vert p_X p_Y\bigr) \ge D\bigl(p_{XZ}\Vert p_X p_Z\bigr),
+\]
+i.e.
+\[
+I(X;Y) \ge I(X;Z).
+\]
+This establishes the data processing inequality for mutual information.
+\end{proof}
+
+\end{document}

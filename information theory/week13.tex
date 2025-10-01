@@ -1,0 +1,252 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Memoryless Gaussian Channels}
+\section{Channel Capacity of Memoryless Gaussian}
+\begin{itemize}
+    \item Why Gaussian Channel? The Gaussian channel is the most commonly used model for a noisy channel with real input and output, because: \begin{enumerate}
+        \item the Gaussian channel is analytically tractable
+        \item the Gaussian noise can be regarded as the WORST kind of additive noise subject to a constraint on a noise power.
+    \end{enumerate}
+\end{itemize}
+\begin{gbox}{Gaussian Channel}
+    A Gaussian channel with noise energy $N$ is a continuous channel with the following two equivalent specifications:
+    \begin{enumerate}
+        \item \[
+        f(y|x)=\frac{1}{\sqrt{2\pi N}}e^{-\frac{(y-x)^2}{2N}},
+        \] a Gaussian pdf with mean $x$ and variance $N$
+        \item or it can be specified by a random noise variable $Z$ where \[
+        Z\sim \N(0,N) \quad\text{and}\quad Y=\alpha(X,Z)=X+Z
+        \]
+    \end{enumerate}
+\end{gbox}
+\begin{gbox}{Memoryless Gaussian Channel}
+    A memoryless Gaussian channel with noise power $N$ and input power constraint $P$ is a memoryless continuous channel with the Gaussian channel with noise energy $N$ as the generic channel. The input power constraint refers to the input constraint $(\kappa, P)$ where $\kappa(x)=x^2$
+\end{gbox}
+The following is the main theorem in this section.
+\begin{bbox}{Capacity of a memoryless Gaussian Channel}
+    The capacity of a memoryless Gaussian channel with noise power $N$ and input power constraint $P$ is \[
+    \frac{1}{2}\log(1+\frac{P}{N})
+    \] 
+    The capacity is achieved by the input distribution $\N(0,P)$
+    \begin{itemize}
+        \item Note that the capacity of a memoryless Gaussian channel only depends on the signal-to-noise ratio $P/N$.
+        \item The capacity is strictly positive no matter how small $P/N$ is.
+        \item The capacity is infinite if there is no input power constraint, meaning we can transmit information at any finite rate if there's no input power constraint.
+    \end{itemize}
+\end{bbox}
+\begin{bbox}{Lemma}
+    Let $Y=X+Z$. Then $h(Y|X)=h(Z|X)$ provided that $f_{Z|X}(z|x)$ exists.
+    \begin{proof}
+        \begin{enumerate}
+            \item Assume $f_{Z|X}$ exists.
+            \item Consider \begin{align*}
+                f_{Y|X}(y|x) &= f_{X+Z|X}(y|x)\\
+                &=f_{x+Z|X}(y|x)\\
+                &=f_{x+Z}-x|X(y-x|x)\quad\text{shifting the variable and parameter by the same amount.}\\
+                &=f_{Z|X}(y-x|x)
+            \end{align*}
+            Thus $f_{Y|X}$ exists.
+            \item $h(Y|X=x)$ is defined, and \begin{align*}
+            h(Y|X) &= \int h(Y|X=x)\dd F_X(x)\\
+            &= \int h(X+Z|X=x)\dd F_X(x)\\
+            &=\int  h(x+Z|X=x)\dd F_X(x)\\
+            &= h(Z|X=x)\dd F_X(x) \quad\text{by invariance of differential entropy under translation}
+            &=h(Z|X)
+            \end{align*}
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\begin{bbox}{Proof of theorem}
+    \begin{proof}
+        \begin{enumerate}
+            \item Let $F(x)$ be the CDF of the input random variable $X$ such that $\bE X^2 \leq P$, where $X$ is not necessarily continuous.
+            \item Since $Z\sim \N(0,N)$, $f_Z$ exists. Then $f_{Z|X}(z|x)$ exists and is equal to $f_Z$ because $Z$ is independent of $X$.
+            \item As we noted before, \[
+            f_{Y|X}(y|x)=f_{Z|X}(y-x|x)=f_Z(y-x).
+            \] Also \[
+            f_Y(y) \int f_{Y|X}(y|x)\dd F_X(x).
+            \]
+            Therefore $f_Y$ exists and $h(Y)$ is defined.
+            \item \begin{align*}
+                \I(X;Y) &= h(Y)-h(Y|X)\\
+                &= h(Y) - h(Z|X)\quad\text{by the above lemma}\\
+                &=h(Y)-h(Z)
+            \end{align*}
+            \item Since $Z\perp X$, and $Z$ is zero-mean,\begin{align*}
+                \bE Y^2 &= \bE(X+Z)^2\\
+                &= \bE X^2 + \bE Z^2 + 2(\bE XZ)\\
+                &=\bE X^2 + \bE Z^2 + 2\bE X\bE Z\\
+                &= \bE X^2 + \bE Z^2\\
+                &\leq P + N
+            \end{align*}
+            \item Then \[
+            h(Y)\leq \frac{1}{2}\log[2\pi 2(P+N)]
+            \] with equality if $Y\sim \N(0,P+N)$. This is achieved when $X\sim\N(0,P)$ by additive property of Gaussian variables.
+            \item \begin{align*}
+                C(P) &= \sup_{F(x):\bE X^2 <P}h(Y)-h(Z)\\
+                &= \frac{1}{2}\log[2\pi e(P+N)]-\frac{1}{2}\log(2\pi e N)\\
+                &=\frac{1}{2}\log(1+\frac{P}{N})
+            \end{align*}
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\section{Parallel Gaussian Channels}
+\begin{gbox}{Parallel Gaussian Channels}
+    \begin{itemize}
+        \item We have $k$ copies of memoryless Gaussian Channels.
+        \item $Z_i\sim \N(0,N_i)$ and $Z_i$ are independent, $1\leq i\leq k$.
+        \item The total input power constraint: \[
+            \bE \sum_{i=1}^k X_i^2 \leq P
+        \]
+        \item \[
+        C(P) = \sup_{F(\vec x):\bE \sum_i X_i^2\leq p}\I(\vec X,\vec Y)
+        \]
+    \end{itemize}
+\end{gbox}
+\begin{bbox}{Channel Capacity of Parallel Gaussian Channels}
+        \[
+        C(P) = \max_{P_1,P_2,\dots,P_k:\sum_i P_i=P}\frac{1}{2}\sum_{i=1}^k\log(1+\frac{P_i}{N_i})
+        \] where the input random variables $X_i\sim\N(0,P_i)$ and are mutually independent.
+        \begin{proof}
+        \begin{enumerate}
+            \item Let $P_i=\bE X_i^2$ be the input power of the $i$th channel. Consider \begin{align*}
+                \I(\vec X;\vec Y) &= h(\vec Y)-h(\vec Z)\\
+                &\leq \sum_{i=1}^kh(Y_i) - \sum_{i=1}^kh(Z_i) \quad\text{by independence bound}\\
+                &\leq \frac{1}{2}\sum_{i=1}^k\log[2\pi e(\bE Y_i^2)]-\frac{1}{2}\sum_{i=1}^k\log(2\pi eN_i)\\
+                &=\frac{1}{2}\sum_i\log \bE Y_i^2 -\frac{1}{2}\sum_i \log N_i \\
+                &=\frac{1}{2}\sum_i\log (\bE X_i^2 + \bE Z_i^2) -\frac{1}{2}\sum_i \log N_i\\
+                &= \frac{1}{2}\sum_i\log (P_i + N_i) -\frac{1}{2}\sum_i \log N_i\\
+                &=\frac{1}{2}\sum_{i=1}^k\log \left(1+\frac{P_i}{N_i}\right)
+            \end{align*}
+        \item The inequalities above are tight when $X_i$ are independent and $X_i\sim \N(0,P_i)$
+        \item Therefore, maximizing $\I(\vec X,\vec Y)$ is a matter of maximizing $\frac{1}{2}\sum_i\log (P_i + N_i) -\frac{1}{2}\sum_i \log N_i$, i.e. we maximize \[
+        \sum_i\log (P_i + N_i)
+        \]
+        \item The capacity of the system of parallel Gaussian channels is equal to the sum of the capacities of the individual Gaussian channels with the input power optimally allocated.
+        \end{enumerate}
+        \end{proof}
+\end{bbox}
+\begin{bbox}{Maximization Problem}
+    We want to maximize $\sum_i\log (P_i + N_i)$ subject to $\sum_i P_i\leq P$ and $P_i \geq 0$.
+    \begin{proof}
+        \begin{enumerate}
+            \item Apply the Lagrange multipliers method.
+            \item Observe that the inequalities constraint becomes an equality constraint because $\log(P_i+N)$ is increasing in $P_i$.
+            \item Let \[
+                L=\sum_{i=1}^k\log(P_i+N_i)-\mu\sum_{i=1}^k P_i
+            \]
+            \item Differentiating with repect to $P_i$, we get \[
+            \frac{\partial L}{\partial P_i}=\frac{\log e}{P_i+N_i} - \mu
+            \]
+            \item Setting $\frac{\partial L}{\partial P_i}=0$, we have \[
+            P_i=\frac{\log e}{\mu}-N_i
+            \]
+            \item Let $\nu=\frac{\log 2}{\mu}$, we have \[
+            P_i=\nu-N_i
+            \] and $\nu$ is chosen such that the power constraint is satisfied:\[
+            \sum_{i=1}^kP_i=\sum_i(\nu-N_i)=P
+            \]
+        \end{enumerate}
+    \end{proof}
+    This solution has a water-filling interpretation. For each channel, if the power has not reached $\nu$, $P_i$ is the amount we fill in to reach $\frac{\log e}{\mu}$ from $N_i$.
+\end{bbox}
+\begin{remark}
+    By an application of the KKarush-Kuhn-tucker (KKT) condition, we obtain that in general,\[
+    C(P)=\frac{1}{2}\sum_{i=1}^k\log\left(1+\frac{P_i^*}{N_i}\right)
+    \] where $\{P_i^*,1\leq i\leq k\}$ is the optimal input power allocation among the channels given by \[
+    P_i^*=(\nu-N_i)^+, 1\leq i\leq k
+    \] where $\nu$ satisfies \[
+    \sum_{i=1}^k(\nu-N_i)^+=P
+    \]
+    \begin{itemize}
+        \item The capacity of the parallel Gaussian channels system is attained when:
+        \item The inputs are independent of each other.
+        \item The inputs are Gaussian.
+        \item The input powers are allocated according to water-filling.
+    \end{itemize}
+\end{remark}
+\begin{bbox}{An optimization problem}
+    Given $\lambda_i\geq 0$, maximize $\sum_{i=1}^k\log(\alpha_i+\lambda_i)$ subject to $\sum_i\alpha_i \leq P$ and $\alpha_i\geq 0$. 
+    \newline
+    The solution is \[
+    \alpha_i^* = (\nu-\alpha_i)^+, 1\leq i\leq k
+    \] where $\nu$ satisfies \[
+    \sum_{i=1}^k(\nu-\lambda_i)^+=P.
+    \]
+    \begin{proof}
+        \begin{enumerate}
+            \item Prove that the proposed solution satisfies the KKT condition.
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\section{Correlated Gaussian Channel}
+\begin{itemize}
+    \item In the setup of parallel Gaussian Channels, we have $k$ copies of independent memoryless Gaussian channels. \begin{enumerate}
+        \item The channels are governed by noise vector $\vec Z\sim \N(\vec 0,N)$.
+        \item \[
+        N = \begin{bmatrix}
+        N_1 & 0 & \cdots & 0 \\
+        0 & \ddots & \ddots & \vdots \\
+        \vdots & \ddots & \ddots & 0 \\
+        0 & \cdots & 0 & N_k
+        \end{bmatrix}
+        \] by independence.
+    \end{enumerate}
+    \item We can generalize to correlated Gaussian channels where \[
+    \vec Z \sim \N(0,K_{\vec Z})
+    \] where $K_{\vec Z}$ is not necessarily a diagonal matrix.
+\end{itemize}
+\subsection{Decorrelation of the Noise Vector}
+Here is a very useful technique to decorrelate a noise vector: \begin{enumerate}
+    \item Since the Gaussian correlation matrix is positive semidefinite, we can diagonalize it as $Q\lambda Q^T$ by the spectral theorem.
+    \item Then apply $Q$ to the input sequence and $Q^T$ to the output sequence: \\
+    \begin{tikzpicture}[auto, node distance=2cm]
+
+    % Nodes
+    \node (Xprime) {$X'$};
+    \node [draw, rectangle, right of=Xprime] (Q) {$Q$};
+    \node [right of=Q] (X) {$X$};
+    \node [draw, circle, right of=X, node distance=2cm] (sum) {$+$};
+    \node [above of=sum, node distance=1.5cm] (Z) {$Z \sim \mathcal{N}(0, K_Z)$};
+    \node [right of=sum, node distance=2cm] (Y) {$Y$};
+    \node [draw, rectangle, right of=Y] (QT) {$Q^T$};
+    \node [right of=QT] (Yprime) {$Y'$};
+
+    % Arrows
+    \draw[->] (Xprime) -- (Q);
+    \draw[->] (Q) -- (X);
+    \draw[->] (X) -- (sum);
+    \draw[->] (Z) -- (sum);
+    \draw[->] (sum) -- (Y);
+    \draw[->] (Y) -- (QT);
+    \draw[->] (QT) -- (Yprime);
+\end{tikzpicture}\\
+so that $\vec Y'= Q^T \vec Y$ and $\vec X' = Q^T\vec X$.
+\item Let $\vec Z =Q^T Z$ and so $\vec Z'$ is also Gaussian. Then \[
+\vec Y'=Q^T \vec Y=Q^T(\vec X+\vec Z)=Q^T \vec X+Q^T\vec Z= \vec X'+\vec Z'.
+\]
+\item This shows that $\vec Z'$ forms a new Gaussian channel where $\vec X'$ and $\vec Y'$ are the input and output sequences. 
+\item Since $\vec Z'= Q^T \vec Z$, \[
+K_{\vec Z'}=Q^TK_{\vec Z}Q=\Lambda.
+\]
+So $\vec Z_i'\sim \N(0,\lambda_i)$ and are mutually independent. So we now have a parallel Gaussian channel system.
+\end{enumerate}
+\begin{bbox}{Decorrelated system has the same capacity}
+    \begin{itemize}
+        \item For the power constraint. since $\vec X'=Q^T\vec X$ and and $Q^T$ is an orthogonal matrix, then as proved previously \[
+            \bE \sum_i(X'_i)^2 = \bE\sum_i X_i^2
+        \]
+    \end{itemize}
+    For the equivalence of capacity, we claim that $\I(\vec X',\vec Y') = \I(\vec X,\vec Y)$: \begin{proof}
+        \begin{align*}
+            \I(\vec X',\vec Y) &= h(\vec Y')-h(\vec Y'|\vec X')\\
+            &=h(\vec Y')-h(\vec Z'|\vec X') \quad\text{by a previous lemma}\\
+            &=h(\vec Y')-h(\vec Z')\\
+            &=h(Q^T \vec Y) - h(Q^T\vec Z)\\
+            &=\left[h(\vec Y)+\log|\det Q^T|\right]-\left[h(\vec Z) +\log |\det Q^T|\right]\\
+            &=h(\vec Y)-h(\vec Z)\\
+            &= \I(\vec X;\vec Y) \quad \text{by repeating what we did in reverse order.}
+        \end{align*}
+    \end{proof}
+\end{bbox}
+\end{document}

@@ -1,0 +1,53 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\begin{pbox}{Quotes}
+    \begin{itemize}
+        \item \textit{The fundamental problem of communication is that of reproducing at one point either exactly or approximately a massage selected at another point.}
+        \newline
+        Claude Shannon, A mathematical theory of communication (1948)
+        \item \textit{There is, essentially, only one problem in statistical thermodynamics: the distribution of a given amount of energy $E$ over $N$ identical systems or, perhaps better, to determine the distribution of an assemly of $N$ identical systems over the possible states in which this assembly can find itself, given that the energy of the assembly is a constant $E$.}
+        \newline
+        Erwin Schr\"{o}dinger.
+        \item \textit{\dots reconcile the time-reversibility of classical mechanics and the irreversibility of thermodynamics.}
+        \newline
+        Peter Whittle, on Ehrenfest model.
+    \end{itemize}
+\end{pbox}
+\begin{gbox}{Legendre Transform}
+\[
+L(f)(x) = \sup_\beta (\beta x - f(\beta))
+\] where $f$ is convex. For a $C^2(\bR)$ function with strictly positive second derivative, the Legendre transform can be written as 
+\begin{align}
+L(f)(x) = x\left(f^{(1)}\right)^{-\circ}(x) - f\left(\left(f^{(1)}\right)^{-\circ}(x)\right). \label{Legendre Transform}
+\end{align}
+    
+\end{gbox}
+\begin{bbox}{Exercise 1.1.1}
+
+Prove \eqref{Legendre Transform}.
+\begin{proof}
+The idea is to find the maximizer $\beta$. First of all, we notice that $\beta x - f(\beta)$ is concave as a sum of two concave function. Therefore, the maximizer occurs when its first derivative is $0$. 
+    \begin{align}
+        \frac{\dd}{\dd \beta}(\beta x - f(\beta)) &= x - f^{(1)}(\beta)\\
+        x-f^{(1)}(\beta)=0 &\implies x = f^{(1)}(\beta).
+    \end{align}
+Then we plug $\beta = (f^{(1)})^{-\circ}$ in $\beta x - f(\beta).$
+\end{proof}
+    
+\end{bbox}
+\begin{bbox}{Exercise 1.3.3}
+    Compute the capacity of the channel with transition probability \[
+    p_{jk} \overset{def}{=} P\left(Y=a_j | X= a_k\right), \quad j,k=1,\dots,K,
+    \]
+    for $K=2$.
+    \begin{proof}
+        The channel capacity is just the supremum of the mutual information between $X$ and $Y$ over all the distribution on $X$. 
+        \begin{align*}
+            I(X;Y) &= \sup_{X}H(Y)-H(Y|X)\\
+            &=\sup_{X} -\sum_{j=1,2}P(Y=a_j) \log_2 P(Y=a_j) + \sum_{k=1,2} P(X=a_k)H(Y|X=a_k)\\
+            &= \sup_{p_X}-\sum_{j=1,2}(\sum_{k=1,2} p_X(a_k)p_{jk})\log_2 P(Y=a_j) + \sum_{k=1,2}p_X(a_k)H(Y|X=a_k)\\
+
+        \end{align*}
+    \end{proof}
+\end{bbox}
+\end{document}

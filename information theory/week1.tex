@@ -1,0 +1,182 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+
+    
+\chapter{Chapter 1: The Science of Information}
+\begin{itemize}
+    \item Founded by Claude E. Shannon (1916-2001)
+    \item "The Mathematical Theory of Communication," 1948
+    \item Study fundamental limits in communications: transmission, storage.
+    \item information source $\to$ transmitter (signal + noise)$\to$ receiver
+\end{itemize}
+\begin{pbox}{2 Key Concepts}
+    \begin{itemize}
+        \item Information is uncertainty: modeled as random variables
+        \item Information is digital: Transmission should be 0's and 1's (bits) with no reference to what they represent.
+    \end{itemize}
+\end{pbox}
+\begin{bbox}{2 Fundamental Theorems}
+    \begin{itemize}
+        \item Source coding theorem: fundamental limit in data compression (zip for general file, especially for text, MP3 for audio, JPEG for image, MPEG for video)
+        \item Channel coding theorem: fundamental limit for reliable communication through a noisy channel (telephone, cell phone, modem, data storage)
+    \end{itemize}
+\end{bbox}
+
+
+\chapter{Chapter 2: Information Measures}
+\section{Independence and Markov Chains}
+\begin{pbox}{Notations}
+    \begin{itemize}
+        \item $X$ discrete random variable taking values in $\mathcal{X}$.
+        \item $\S_X$: support of $X$, i.e. $\{x\in\X|p_X(x)>0\}$
+        \item If $\mathcal{S}_X = \X$, we say the probability measure $p$ is strictly positive.
+        \item Non-strictly positive distributions are dangerous
+    \end{itemize}
+\end{pbox}
+
+\begin{gbox}{Definitions}
+    \begin{itemize}
+        \item Independence and mutual independence: joint means multiplication
+        \item Pairwise independent: implied by mutual independence, not vice versa. 
+        \item Conditional independence: $X \perp Z|Y$
+    \end{itemize}
+\end{gbox}
+\begin{bbox}{Proposition 2.5}
+    \begin{proposition}
+        For $X,Y$, and $Z$, and $X\perp Z |Y$ if and only if $p(x,y,z)=a(x,y)b(y,z)$ for any $x,y,z$ such that $p(y)>0$.
+        
+    \end{proposition}
+    \begin{proof}
+        Only if: $a(x,y)=\frac{p(x,y)}{p(y)}$, $b(y,z)=p(y,z)$.
+        If: Let $p(x,y,z)=a(x,y)b(y,z)$.  $p(x,y,z)=p(x) p(x|y) P(z|x,y)$, therefore $b(y,z)$ must contain $p(z|x,y)$, meaning $x$ doesn't affect $p(z|x,y)$.\\
+        Rigorous proof: \begin{align*}
+            p(x,y)&=\sum_z p(x,y,z) = \sum_z a(x,y)b(y,z)=a(x,y)\sum_z b(y,z)\\
+            p(y,z) &= b(y,z)\sum_x a(x,y)\\
+            p(y) &= \sum_z p(y,z) =(\sum_x a(x,y))(\sum_z b(y,z))
+        \end{align*}
+        With some algebra, we get $p(x,y,z)=\frac{p(x,y)p(y,z)}{p(y)}$
+    \end{proof}
+\end{bbox}
+\begin{gbox}{Markov Chain}
+    Markov Chain: $X_1,X_2,...$, $p(x_1,x_2,...)=p(x_1,x_2)p(x_3|x_2)...p(x_n|x_{n-1}$\\
+    Remark: the reversed chain is still Markov. (symmetry of independence)
+\end{gbox}
+\begin{bbox}{Prop}
+    \begin{proposition}
+        $X_1,...,X_n$ is a Markov chain iff $(x_1,...,x_m),...,x_n$ is an MC for any $m$.
+    \end{proposition}
+    \begin{proposition}
+        $X_1,...,X_n$ forms an MC if and only if $p(x_1,,,x_n)= f_1(x_1,x_2),...,f_{n-1}(x_{n-1},x_n)$.\\
+        Generalization of Prop 2.5
+    \end{proposition} 
+    \begin{proposition}
+        Any subchain of a Markov chain is a Markov chain!
+    \begin{proof}
+        Never forget about law of total probability! 
+    \end{proof}
+    \end{proposition}
+\end{bbox}
+
+\section{2.2 Shannon's Information Measures}
+There are 4 types of information measures: entropy, conditional entropy, mutual information, and conditional mutual information.
+\begin{definition}
+    The entropy $H(X)$ of a random variable $X$
+ is defined as \begin{align}
+     H(X) = - \sum_x p(x) \log p(x)
+ \end{align}
+ Convention: summation is taken over $Support_X$.\\
+ When the base of the logarithm is $a$, write $H$ as $H_a$.\\
+ The unit for entropy is bit if $a = 2$, nat if $a=e$, D-it if $a=D$.\\
+ The notion of bit in I.T. is very different from the notion of bit in CS.
+ \end{definition}
+\begin{remark}
+    $H(X)$ depends only on the distribution of $X$ but not on the actual values taken by $X$, hence also write $H(p_X)$.
+\end{remark}
+Entropy as Expectation
+\begin{equation*}
+    H(X) = -\E \log p(X)
+\end{equation*}
+\begin{gbox}{Binary Entropy Function}
+    \begin{definition}
+        For $0 \leq \gamma\leq 1$, define the binary entropy function \begin{equation*}
+            h_b(\gamma) = -\gamma \log \gamma - (1-\gamma) \log (1-\gamma)
+        \end{equation*} with the convention $0 \log 0 = 0$, as by L'Hopital's rule, $\lim_{a\to 0}a\log a=0$
+    \end{definition}
+\end{gbox}
+For binary random variable with distribution $\gamma$, $X\sim \{\gamma, 1-\gamma\}, H(X) = h_b(\gamma)$.\\
+As a function of $\gamma$, the curve looks like a cap.
+\begin{pbox}{Interpretation}
+    Consider tossing a coin with $\p(Head) = \gamma$, $\p(Tail) = 1-\gamma$. Then $h_b(\gamma)$ measures the amount of uncertainty in the outcome of the toss. When $\gamma =0$ or $1$, the coin is deterministic. When the coin is fail, the uncertainty is 1 bit.
+\end{pbox}
+\begin{gbox}{Joint Entropy}
+    The joint entropy $H(X,Y)$ of a pair of random variables $X$ and $Y$ is defined as \begin{equation*}
+        H(X,Y) = -\sum_{x,y}\p(x,y)\log\p(x,y) = -\E \log p(X,Y).
+    \end{equation*}
+\end{gbox}
+\begin{gbox}{}
+    For random variables $X$ and $Y$, the conditional entropy of $Y$ given $X$ is defined as $H(Y|X)=-\sum_{x,y}\p(x,y)\log p(y|x) = -E\log \p(Y|X)$.
+\end{gbox}
+
+\begin{align*}
+H(Y|X)&=-\sum_x\sum_y\p(x)\p(y|x)\log p(y|x)\\
+&= \sum_x\p(x)\sum_y\p(y|x)\log\p(y|x)\\
+&= \sum_x\p(x) \H(Y|X=x)\\
+&= -\E_{\p(x,y)}\log \p(Y|X)
+\end{align*}
+\begin{remark}
+    Conditional expectation is a random variable but conditional entropy is 
+\end{remark}
+\begin{bbox}{Proposition 2.16}
+    \begin{equation}
+        \H(X,Y) = H(X) + H(Y|X)\\
+        \H(X,Y)=\H(Y) + H(X|Y)
+    \end{equation}
+    \begin{proof}
+        \begin{align*}
+            H(X,Y) &= -\E\log\p(X,Y)\\
+            &= -\E\log (\p(X)\P(Y|X))\\
+            &= -\E\log(\p(X))+\E\log(Y|X)
+        \end{align*}
+    \end{proof}
+    The total amount of entropy is the same independent of the number of steps you take to reveal the random variables.
+\end{bbox}
+\begin{gbox}{mutual information}
+    The mutual information between $X$ and $Y$ is defined as \begin{equation*}
+        \I(X;Y) = \sum_{x,y}p(x,y)\log \frac{p(x,y)}{p(x)p(y)} = \E \log \frac{p(X,Y)}{p(X)p(Y)}
+    \end{equation*}
+Note the mutual information is symmetric.\\
+Alternatively, $I(X;Y)=\E \log \frac{p(X|Y)}{P(X)}$
+\end{gbox}
+\begin{proposition}
+    The mutual information between a random variable $X$ and itself is equal to its entropy. (Proof is trivial.)\\
+    The entropy is sometimes called self-information.
+\end{proposition}
+\begin{proposition}
+    \begin{equation*}
+        I(X;Y) = H(X)- H(X|Y)\\
+        =H(Y)-H(Y|X)
+    \end{equation*}
+    and \begin{equation*}
+        I(X;Y)=H(X)+H(Y)-H(X,Y)
+    \end{equation*} if the quantities are finite.\\
+    Analogous to de Morgan, where $\I$ is like intersection.
+\end{proposition}
+Note that you can also have conditional mutual information: \begin{equation*}
+    I(X;Y|Z):= \sum_{x,y,z} \p(x,yz)\log \frac{p(x,y|z)}{p(x|z)p(y|z)} = \E\log\frac{p(X,Y|Z)}{p(X|Z)p(Y|Z)}
+\end{equation*}
+The self-information argument also applies to conditional mutual information.
+\begin{remark}
+    All Shannon's information measures are special cases of conditional mutual information. Let $a$ denote a RV taking constant value.
+    Then $H(X)=I(X;X|a)$...
+\end{remark}
+\section{Continuity of Shannon's information measures for fixed finite alphabets}
+All Shannon's information measures are continuous when the alphabets are fixed and finite. For countable alphabets, Shannon's information measures are everywhere discontinuous.
+\begin{definition}
+    Let $p$ and $q$ be 2 probability distributions on a common alphabet $\X$. The variational distance ($L_1$ distance) between $p$ and $q$ is defined as \begin{equation*}
+        V(p,q)=\sum_{x\in\X}|p(x)-q(x)|
+    \end{equation*}
+    We can show that $\lim_{p'\to p} H(p')=H(\lim_{p'\to p}p')=H(p)$.
+\end{definition}
+    An example: Let $\X$ be the set of positive integers. $P_X = \{1,0,0,...\}$. $P_{X_n} = \{ 1-\frac{1}{\sqrt{\log n}},... \}$. The variational distance tends to 0. However, $H(P_X)=0$ but $\lim_{n\to\infty}H(P_n)=\infty$.
+\end{document}

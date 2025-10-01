@@ -1,0 +1,303 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Chapter 2 Continued}
+\section*{Introduction}
+    Finish up chapter 2 and prove Fano's inequality.
+\section{2.4 Chain Rule}
+    \begin{bbox}{Chain Rule for Entropy}
+        \begin{equation*}
+            H(X_1,\dots,X_n)=\sum_{i=1}^{n}H(X_i|X_1\dots X_{i-1})
+        \end{equation*}
+        Note a special case: $H(X_1, X_2)=H(X_1)+H(X_2|X_1)$.
+        Note we also have chain rule for conditional entropy, mutual information, and conditional mutual information.
+        \begin{proof}
+        Induction.
+        For the conditional version:
+            \begin{align*}
+                &H(X_1,X_2,\dots,X_n|Y)\\
+                &=H(X_1,\dots,X_n,Y)-H(Y)\\
+                &=H((X_1,Y),X_2,\dots,X_n)-H(Y)
+            \end{align*}    
+        \end{proof}
+    \end{bbox}
+
+\section{2.5 Informational Divergence}
+    
+    \begin{gbox}{Informational Divergence}
+        The informational divergence between 2 probability distributions $p$ and $q$ on a common alphabet $\X$ is defined as \begin{equation}
+            \D(p||q) = \sum_x p(x)\log\frac{p(x)}{q(x)} = \E_p \log\frac{p(X)}{q(X)}
+        \end{equation} where $E_p$ is the expectation with respect to $p$.
+    \end{gbox}
+
+\begin{itemize}
+    \item Summation is over the support of $p$.
+    \item $c\log\frac{c}{0} = \infty$ for $c>0$.
+    \item If $D(p||q) < \infty$, then $p(x)>0\implies q(x)>0$ or $\S_p\subset \S_q$.
+    \item $D(p||q)$ measures the "distance" between $p$ and $q$, but the informational divergence is not symmetric and does not satisfy the triangle inequality.
+\end{itemize}
+\begin{bbox}{The Fundamental Inequality} For any $a>0$, \begin{equation*}
+    \ln a \leq a-1
+\end{equation*} with equality if and only if $a=1$.\\
+This inequality is very clear.
+\begin{corollary*}
+    \begin{equation*}
+        \ln a \geq 1-\frac{1}{a}
+    \end{equation*}
+\end{corollary*}
+\end{bbox}
+\begin{bbox}{Divergence Inequality}
+\begin{theorem*}
+    For any two probability distributions $p$ and $q$ on a common alphabet, $\D(p||q)\geq 0$ with equality if and only if $p=q$.
+\end{theorem*}
+\begin{proof}
+(Note also follows from Jensen's inequality as $\log$ is concave.)
+    \begin{align*}
+        D(p||q) &= \sum p(x)\log \frac{p(x)}{q(x)}\\
+        &= (\log e)\sum p(x)\ln\frac{p(x)}{q(x)}\\
+        &\geq \log e \sum p(x) (1-\frac{q(x)}{p(x)})\\
+        &= \log e \sum (p(x)-q(x))\\
+        &= 0
+    \end{align*}
+\end{proof}
+\end{bbox}
+\begin{bbox}{Log-Sum Inequality}
+    \begin{equation*}
+        \sum_i a_i\log\frac{a_i}{b_i}\geq (\sum_i a_i)\log\frac{\sum a_i}{\sum b_i}
+    \end{equation*}
+    \begin{proof}
+        Let $a_i' = a_i/\sum a_j$ and $b_i'=b_i/\sum_j b_j$. So we constructed 2 probability measures, then we can apply the divergence inequality.
+    \end{proof}
+\end{bbox}
+\begin{bbox}{Pinsker's Inequality}
+    \begin{equation*}
+        D(p||q)\geq \frac{1}{2\ln2}V^2(p,q)
+    \end{equation*}
+    This means if divergence is small, the $L_1$ distance is also small. Also, convergence in divergence is stronger than convergence in variational distance.
+\end{bbox}
+\section{2.6 Basic Information}
+\begin{bbox}{Mutual information is non-negative}
+    \begin{equation*}
+        I(X;Y|Z)\geq 0
+    \end{equation*} with equality if and only if $X\perp Y|Z$.\\
+    A consequence is that all Shannon measures of information are non-negative.
+    \begin{proof}
+    \begin{align*}
+        &\I(X;Y|Z)\\
+        &=sum_{x,y,z}p(x,y,z)\log\frac{p(x,y|z}{p(x|z)p(y|z)}\\
+        &= \sum_z\sum_{x,y} p(z)p(x,y|z)\log \frac{p(x,y|z}{p(x|z)p(y|z)}\\
+        &= \sum_zp(z)\D(P_{X,Y|z}||p_{X|z}p_{Y|z})
+    \end{align*}
+    The mutual information is $0$ if and only if $X,Y$ are independent given $Z$.
+    \end{proof}
+\end{bbox}
+\begin{itemize}
+    \item $H(X)=0$ if and only if $X$ is deterministic.
+    \begin{proof}
+        If: trivial
+        Only if: If $X$ is not deterministic, then there exists a point ... $H(X)>0$.
+    \end{proof}
+    \item $H(Y|X)=0$ if and only if $Y$ is a function of $X$.
+.\end{itemize}
+
+\section{2.7 More Useful Inequalities}
+\begin{bbox}{Conditioning does not increase entropy}
+    $H(Y|X)\leq H(Y)$ with equality if and only if $X$ and $Y$ are independent.
+    \begin{proof}
+        \begin{equation*}
+            H(Y|X)=H(Y)-I(X;Y)\leq H(Y)
+        \end{equation*}
+    \end{proof}
+Warning: conditioning does not necessarily decrese mutual information.
+\end{bbox}
+\begin{bbox}{Independence Bound for Entropy}
+    \begin{theorem*}
+        \begin{equation*}
+            H(X_1,...,X_n)\leq \sum_{i=1}^n H(X_i)
+        \end{equation*} with equality if and only if $X_i$ are mutually independent.
+    \end{theorem*}
+    \begin{proof}
+        Use chain rule and apply last theorem.
+    \end{proof}
+\end{bbox}
+
+\begin{bbox}{Mutual information decreases when removing RV}
+    \begin{theorem}
+        \begin{equation*}
+            I(X;Y,Z)\geq I(X;Y)
+        \end{equation*} 
+        with equality if and only if $X,Y,Z$ forms a Markov chain.
+    \end{theorem}
+    \begin{proof}
+        By the chain rule, we have $I(X;Y,Z)=I(X;Y) + I(X;Z|Y) \geq I(X;Y)$. The above inequality is tight if and only if $I(X;Z|Y)=0$ i.e. the future is independent of the past given present.
+    \end{proof}
+\end{bbox}
+
+\begin{bbox}{Mutual information and Markov chain}
+    \begin{lemma}
+        If $X,Y,Z$ forms a Markov chain, then $I(X;Z)\leq I(X;Y)$ and $I(X;Z)\leq I(Y;Z)$
+    \end{lemma}
+    If 2 random variables in a chain are close, then they have high mutual info.
+    \begin{proof}
+        The first inequality is obtained by applying the chain rule: $I(X;Z) = I(X;Y,Z)-I(X;Y|Z)\leq I(X;Y,Z)$\\
+        $=I(X;Y)+I(X;Z|Y) = I(X;Y)$
+    The second inequality follows from the fact that the reversed chain is also markov.
+    \end{proof}
+    \begin{corollary*}
+        If $X,Y,Z$ Markov, then $H(X|Z)\geq H(X|Y)$.
+    \end{corollary*}
+    Suppose $Y$ is an observation of $X$. Then further processing of $Y$ can only increase the uncertainty about $X$ on average.
+\end{bbox}
+\begin{bbox}{Data Processing Theorem}
+    If $U\to X\to Y\to V$ forms a Markov chain, then \begin{equation*}
+        I(U;V)\leq I(X;V)
+    \end{equation*}
+    \begin{proof}
+        Consider the subchain $U,X,Y$ and $U,Y,V$.
+        From the first chain, we have $I(U;Y)\leq I(X;Y)$. From the second chain, we have $I(U,V)\leq I(U,Y)$.\\
+        Therefore $I(U;V)\leq I(X;Y)$
+    \end{proof}
+\end{bbox}
+\begin{pbox}{This perspective is better!}
+    Let $Z=g(Y)$, then \begin{equation*}
+        I(X;Y) \geq I(X;g(Y))
+    \end{equation*}
+    because $X,Y,g(Y)$ is Markov. We infer $X$ from $Y$. If you manipulate your data, the inference cannot be improved.
+\end{pbox}
+
+\section{Fano's Inequality}
+\begin{bbox}{Upper bound of entropy}
+    \begin{theorem*}
+        For any RV $X$, \begin{equation*}
+            H(X)\leq \log |\X|
+        \end{equation*} with equality if and only $X$ is uniform.
+    \end{theorem*}
+    \begin{proof}
+        Let $u(x)=\frac{1}{|\X|}$. Then \begin{align*}
+            &\log |\X|-H(X)\\\
+            &= -\sum_x p(x)u(x) + \sum_x p(x)\log p(x)\\
+            &=D(p||u)\geq 0
+        \end{align*}
+    \end{proof}
+\end{bbox}
+Note \begin{itemize}
+    \item If alphabet is finite, then entropy is finite.
+    \item The entropy of a RV may take any non-negative value: intermediate value theorem.
+\end{itemize}
+Example: Let $X$ be RV st $p(i)=2^{-i}$. Then $H_{2}(X)=2$. Expectation of geometric distribution.
+\begin{bbox}{Fano's Inequality}
+    Let $X$ and $\hat{X}$ have the same alphabet. Then \begin{equation*}
+        H(X|\hat{X})\leq h_b(P_e) + P_e \log (|\X|-1)
+    \end{equation*}, where $P_e = Pr(\hat{X}\neq X)$.
+    \begin{proof}
+        Define indicator $Y$, which is equal to $1$ when we have error, i.e. $X\neq \hat{X}$. $P(Y=1)=P_e$. $H(Y)=h_b{P_e}$. Since $Y$ is a function of $X$ and $\hat{X}$, $H(Y|X,\hat{X})=0$.
+        Then \begin{align*}
+            &\H(X|\hat{X})\\
+            &=H(X|\hat{X})+H(Y|X,\hat{X})\hspace{5mm}\text{addition by 0}\\
+            &= H(X,Y | \hat{X})\\
+            &= H(Y|\hat{X})+H(X|Y,\hat{X})\\
+            &\leq H(Y) + \sum_{\hat{x}}[P(\hat{X}=\hat{x}, Y=0) H(X|\hat{X}=\hat{x}Y=0)\\
+            &+P(\hat{X}=\hat{x}, Y=1) H(X|\hat{X}=\hat{x}Y=1)]\\
+            &= H(Y) + \sum_{\hat{x}}P(\hat{X}=\hat{x}, Y=1) H(X|\hat{X}=\hat{x}Y=1)\\
+            &\leq H(Y) + \sum_{\hat{x}}P(\hat{X}=\hat{x}, Y=1)\log (|X|-1)\\
+            &= h_b(P_e)+P_e\log(|X|-1)
+        \end{align*}
+        \begin{corollary*}
+            Weaker: \begin{equation*}
+                H(X|\hat{X}) < 1+P_e\log |\X|.
+            \end{equation*}
+        \end{corollary*}
+    \end{proof}
+\end{bbox}
+\begin{itemize}
+    \item Think of $\hat{X}$ as an estimate of $X$. 
+    \item $P_e$ is the probability of error. If the error probability is small, then $H(X|\hat{X})$ should also be small.
+\end{itemize}
+
+\section{Entropy Rate of a Stationary Source}
+\subsection{Discrete-time Information Source}
+In most communication systems, communication takes place continually instead of over a finite period of time.\\
+Exampls: TV broadcast, internet, cellular system.
+The information source can be modeled as a discrete-time random process $\{X_k,k\geq 1\}$.\\
+$\{X_k,k\geq 1\}$ is an infinite collection of random variables indexed by the set of positive integers. The index $k$ is referred as the "time."\\
+Random variables $X_k$ are called letters, and we assume they have finite entropy.
+\begin{gbox}{Total Entropy of $\{K_k\}$}
+    For a finite subset $A$ of the index set $\{k:k\geq 1\}$, the joint entropy $H(X_k, k\in A))$ is finite because \begin{equation*}
+        H(X_k, k\in A) \leq \sum_{k\in A} H(X_k) < \infty
+    \end{equation*} by the independence bound.
+\end{gbox}
+Example, $X_k$ are iid and $H(X_k)=h$. Then joint entropy $H(X_k,k\geq 1)=\sum_{k=1}^{\infty}H(X_k)=\sum_{k=1}^{\infty} h = \infty$. In general, it's not meaningful to discuss the joint entropy of an information process.
+\subsection{Entropy Rate}
+We are motivated to define the entropy rate of an information source instead, which gives the average entropy of a letter of the source.
+\begin{gbox}{Entropy Rate}
+    The entropy rate of an information source $\{X_k\}$ is defined as \begin{equation*}
+        H_X = \lim_{n\to \infty} \frac{1}{n}H(X_1,\dots,X_n)
+    \end{equation*} when the limit exists.
+\end{gbox}
+\begin{pbox}{Entropy Rate May Exist}
+    Let $X_k$ be iid source with generic random variable $X$. Then \begin{equation*}
+        \lim_{n\to\infty}H(X_1,\dots,X_n)/n =\lim_{n\to\infty}\frac{n \H(X)}{n}=\H(X)
+    \end{equation*},
+    i.e., the entropy rate of an i.i.d. source is the entropy of any one of the letters.
+\end{pbox}
+\begin{pbox}{Entropy Rate May Not Exist}
+    Suppose the entropy grows linearly: Let $\H(X_k) = k$. Then \begin{align*}
+        \frac{1}{n}H(X_1,\dots,X_n)&= \frac{1}{n}\sum_{k=1}^nH(X_k)\\
+        &= \frac{1}{n}\sum_{k=1}^nk\\
+        &=\frac{1}{n}\frac{n(n+1)}{2}\\
+        &\to\infty
+    \end{align*} 
+\end{pbox}
+Note it's natural to consider \begin{equation*}
+    H'_X = \lim_{n\to\infty}H(X_n|X_1,\dots,X_{n-1})
+\end{equation*} if it exists.
+\begin{itemize}
+    \item This quantity $H'_X$ is the conditional entropy of the next letter given all the history of the source.
+    \item Fundamental question: $H'X=H_X$?
+ \end{itemize}
+ \begin{gbox}{Stationary Information Source}
+     A stationary information source is one such that any finite block of random variables and any of its time-shift versions have exactly the same joint distribution. That is $X_1,\dots,X_m$ has the same joint distribution as $x_{l+1},\dots,X_{m+l}$. 
+ \end{gbox}
+ \begin{bbox}{Stationarity and $H'_X$}
+     If a process is stationary, then $H'_X$ exists.
+     \begin{proof}
+         Conditional entropy is lower bounded by $0$. We can show that the sequence H(current letter$|$past) is non-increasing to show the limit $H'_X$ exists by the monotone-bounded theorem.
+         \begin{align*}
+             &H(X_n|X_1,\dots,X_n)\\
+             &\leq H(X_n|X_2,\dots,X_{n-1})\\
+             &=H(X_{n-1}|X_1,\dots,X_{n-2}) \hspace{5mm} \text{by stationarity}
+         \end{align*}
+     \end{proof}
+ \end{bbox}
+ \begin{gbox}{Cesáro Mean}
+     Consider a sequence $\{a_n\}$. Construct a sequence \begin{equation*}
+         b_n=\frac{1}{n}\sum_{i=1}^n a_i
+     \end{equation*}.
+     $b_n$ is the average of the first n terms, called the Ceséro meanmeans
+ \end{gbox}
+ \begin{bbox}{Cesáro Mean goes to the same limit}
+     Let $b_n$ be $a_n$'s cesaro mean, and $a_n\to a$. Then $b_n\to a$.
+     \begin{proof}
+         For all $\epsilon$, there exists $N(\epsilon)$ so that the distance between $a_n$ and a is less than $\epsilon$ once we go beyond the threshold $N$. Consider \begin{align*}
+             |b_n-a|=|\frac{1}{n}\sum_{i=1}^n (a_i-a)|\\
+             \leq \frac{1}{n}\sum_{i=1}^n |a_i-a|
+         \end{align*}
+         Break the summation into 2 parts: first part summing over $1\leq i\leq N(\epsilon)$
+     \end{proof}
+ \end{bbox}
+ 
+ \begin{bbox}{With stationarity $H_X$ is equal to $H'_X$}
+     \begin{proof}
+         First of all, $H'_X$ exists for stationary process.
+         Let $a_n$ be $H'_n = H(X_n|X_1,\dots,X_{n-1})$. Let $b_n=\frac{1}{n}H(X_1,\dots,X_n)$.\\
+         By the chain rule,
+         \begin{align*}
+             \frac{1}{n}H(X_1,\dots,X_n)\\
+             =\frac{1}{n}\sum_{k=1}^n H(X_k|X_1,\dots,X_{k-1})
+         \end{align*}
+         Then the left hand side is just the cesaro mean.
+     \end{proof}
+ \end{bbox}
+ The entropy rate of an information source exists under a fairly general assumption - stationarity.\\
+ Note $H'_X$ is an alternative definition for entropy rate for stationary process.
+ 
+\end{document}

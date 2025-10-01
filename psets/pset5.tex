@@ -1,0 +1,283 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 5}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+
+\subsection*{4.1 Huffman code example.}
+a) Construct a binary Huffman code for the distribution $\{0.25, 0.05, 0.1, 0.13, 0.2, 0.12, 0.08, 0.07\}$.
+\begin{proof}
+ We denote the codeword corresponding to $p_i$ by $c_i$. We first merge $p_2=0.05$ and $p_8=0.07$...\begin{align*}
+     &\{0.25, 0.12, 0.1, 0.13, 0.2, 0.12, 0.08\}\\
+     &\{0.25, 0.12, 0.18, 0.13, 0.2, 0.12\}\\
+     &\{0.25, 0.24, 0.18, 0.13, 0.2\}\\
+     &\{0.25, 0.24, 0.31, 0.2\}\\
+     &\{0.25, 0.44, 0.31\}\\
+     &\{0.56, 0.44\}
+ \end{align*}
+%  \begin{tikzpicture}[
+%     level 1/.style={sibling distance=8cm},
+%     level 2/.style={sibling distance=4cm},
+%     level 3/.style={sibling distance=2cm},
+%     edge from parent/.style={draw,thick,-latex},
+%     every node/.style={draw,circle,minimum size=2em,inner sep=2pt, text width=2.5em, align=center}
+% ]
+%     \node {Root}
+%         child { node {0, p=0.44}
+%             child { node {00, $p_5 = 0.2$}
+%             }
+%             child { node {01, p=0.24}
+%                 child { node {010, $p_6=0.12$} }
+%                 child { node {011,p=0.12} 
+%                     child { node {0110, $p_2=0.05$}
+%                     }
+%                     child { node {0111, $p_8=0.07$}
+%                     }
+%                 }
+%             }
+%         }
+%         child { node {1, p=0.56}
+%             child { node {10, p=0.31}
+%                 child { node {100} 
+%                     child{ node{1000 $p_7=0.08$}
+%                     }
+%                     child { node{1001, $p_3=0.1$}
+%                     }
+%                 }
+%                 child { node {101 $p_4=0.13$} }
+%             }
+%             child { node {11}
+%                 child { node {110} }
+%                 child { node {111} }
+%             }
+%         };
+% \end{tikzpicture}
+\begin{forest}
+  for tree={
+    grow=east,
+    edge={-latex},
+    parent anchor=east,
+    child anchor=west,
+    align=center,
+    l=2cm
+  }
+  [{$1$}
+    [{$0.56$}
+      [{$0.31$}
+        [{$0.18$}
+          [{$0.08$\\$\text{1000}$}]
+          [{$0.10$\\$\text{1001}$}]
+        ]
+        [{$0.13$\\$\text{101}$}]
+      ]
+      [{$0.25$\\$\text{11}$}]
+    ]
+    [{$0.44$}
+      [{$0.24$}
+        [{$0.12$}
+          [{$0.05$\\$\text{0110}$}]
+          [{$0.07$\\$\text{0111}$}]
+        ]
+        [{$0.12$\\$\text{010}$}]
+      ]
+      [{$0.20$\\$\text{00}$}]
+    ]
+  ]
+\end{forest}
+\end{proof}
+
+
+ \subsection*{4.2 Ternary Huffman Example}
+ \begin{forest}
+  for tree={
+    grow=east,
+    edge={-},
+    parent anchor=east,
+    child anchor=west,
+    align=center,
+    l=2cm,
+    s sep=1cm
+  }
+  [{$1$}
+    [{$0.45$}
+      [{$0.25$\\$\text{2}$}]
+      [{$0.20$\\$\text{12}$}]
+      [{$0.13$\\$\text{11}$}]
+      [{$0.12$\\$\text{10}$}]
+    ]
+    [{$0.3$}
+      [{$0.1$\\$\text{02}$}]
+      [{$0.08$\\$\text{01}$}]
+      [{$0.12$}
+        [{$0.07$\\$\text{002}$}]
+        [{$0.05$\\$\text{001}$}]
+        [{$0.0$\\$\text{000}$}]
+      ]
+    ]
+  ]
+\end{forest}
+
+ 
+ \subsection*{4.3 Optimality of Huffman Code for uniquely decodable code}
+ \begin{proof}
+ We know Huffman code is an optimal prefix code. Any prefix code is uniquely decodable.
+\end{proof}
+ \subsection*{4.4 Optimal Code with even lengths}
+ \begin{proof}Construct a 4-ary Huffman code!
+ \end{proof}
+ \subsection*{Condition for shortest word length of Binary Huffman to be 1}
+ Show that $p_1>0.4$, then the shortest word length for binary huffman is 1. Then prove the redundancy is lower bounded by $1-h_b(p_1)$.\\
+ Note that we assume $p_1\geq p_2\geq\dots$
+ \begin{proof}
+     $p_1$ is the largest probability mass, by a previous lemma, it should be assigned to the shortest codeword in a Huffman code. If $n=2$, then the both codewords have length of $1$. If $n\geq 5$, let $m = 4$ denote the number of probability masses remained in the Huffman algorithm. First, the probability mass obtained by merging the 2 smallest masses is strictly less than $p_1$ because their average is upper bounded by $0.2$. Also there exist at least 2 masses that are strictly less than $p_1$, so when $m=3$. $p_1$ remains unmerged when $m=3$. When $m=3$, we have $\{p_1, q_1,q_2\}$ and assume $q_1>q_2$. If $q_1$ is  obainted by merging in the previous step, then $p_1\geq q_1\geq q_2$, so $q_1$ and $q_2$ gets merged. If $q_1$ is not obainted by merging, it's one of the $p_i$s so it cannot exceed $p_1$.\\
+
+     Next we show the redundancy \begin{align*}
+         L-H(X) =& \sum_{i}p_i (l_i + \log p_i)\\
+         &\geq \sum_{i}p_i(1+\log p_1)\\
+         &= 1+\sum_{i}p_i(\log p_1)\\
+         &= 1 - h_b(p_1)
+     \end{align*}
+ \end{proof}
+ \subsection*{4.10 Partial knowledge about source distribution}
+ Let $X$ be a source random variable. Suppose a probability mass $p_k$ in the distribution of $X$ is given. Let $l_j  =\begin{cases}
+     \lceil{-\log p_j}\rceil  \quad \text{if $j=k$}\\
+     \lceil-\log(p_j+x_j)\rceil
+     \quad\text{Otherwise}
+     
+ \end{cases}$
+ where \[
+ x_j = p_j(\frac{p_k-2^{-\lceil-\log p_k\rceil}}{1-p_k})
+ \] 
+ Show that \begin{enumerate}
+     \item $1\leq l_j\leq \lceil{-\log p_j}\rceil$
+     \item $\{l_j\}$ satisfies the Kraft inequality
+     \item Obtain an upper bound on $l_huff$ in terms of $H(X)$ and $p_k$ which is tighter than $H(X)+1$. (If knowledge about the source distribution is available, the bound on $L_huff$ can be improved.)
+ \end{enumerate}
+ \begin{proof}
+     The first part is quick, we notice that $x_j$ are non-negative, so for $j\neq k$, $l_j=\lceil-\log(p_j+x_j)\rceil\leq \lceil-\log(p_j)\rceil$.\\
+     For the second part, we first note that $l_k\geq 1$. For $j\neq k$, note that \begin{align*}
+         p_j+x_j &= p_j(\frac{1-2^{-\lceil-\log p_k\rceil}}{1-p_k})\\
+         &\leq 1-2^{-\lceil-\log p_k\rceil}\\
+         & < 1
+     \end{align*}
+     Since $l_j \leq 1$, they are valid word lengths. Next, to show Krafty inequality, \begin{align*}
+         \sum_j 2^{-l_j} &= 2^{-l_k} + \sum_{j\neq k}2^{-l_j}\\
+         &\leq 2^{-\lceil{-\log p_j}\rceil} + \sum_{j\neq k}p_j(\frac{1-2^{-\lceil-\log p_k\rceil}}{1-p_k})\\
+         &=1
+     \end{align*}
+     For the third part, we know that there exists a prefix code on these words since the lengths satisfy the Kraft inequality. Then the redundancy is \begin{align*}
+         Redundancy &= L- H(X)\\
+         &= p_k(l_k+\log p_k) + \sum_{j\neq k}p_j(l_j+\log p_j)\\
+         &< p_k(\lceil{-\log p_j}\rceil+\log p_k) + \sum_{j\neq k}p_j(-\log(p_j\frac{1-2^{-\lceil-\log p_k\rceil}}{1-p_k})+1 +\log p_j)\\
+         &= 1-H_b(p_k)-(1-p_k)\log(1-2^{-\lceil{-\log p_j}\rceil}) - p_k(1-\lceil{-\log p_j}\rceil).
+     \end{align*}
+ \end{proof}
+ \subsection*{5.1 Non-emptiness of typical set}
+ Show that for any $\epsilon>0$, $W^{n}_{\epsilon}$
+ is nonempty for sufficiently large $n$.
+ \begin{proof}
+ Fix any $\epsilon > 0$. By weak AEP, $|W^{n}_{\epsilon}| \geq (1-\epsilon) 2^{n(H(X)-\epsilon)}\to 0$ as $n\to\infty$, assuming $\epsilon$ is smaller than $1$ and $H(X)$.
+  \end{proof}
+  
+ \subsection*{5.2 Asymptotic probability of error}
+ Show that $P_e\to 1$ as $n\to \infty$
+ \begin{proof}
+     
+
+ Let \( P_e(i) = \Pr\{ g(f(X)) \neq X \mid f(X) = i \} \).
+ \[
+1 - P_e(i) = \Pr\{ g(f(X)) = X \mid f(X) = i \} = \sum_{x \in X_i} \Pr\{ g(f(X)) = X \mid f(X) = i, X = x \} \Pr\{ X = x \mid f(X) = i \}.
+\]
+Through probability transformation and recognition of different expressions of the same event, we see \[
+P_e(i) \geq 1 - \frac{\Pr\{X = x^*_i\}}{\Pr\{X \in X_i\}}
+\] where \(x^*_i \in X_i\) achieves \(\max_{x \in X_i} \Pr\{X = x\}.
+\)
+\begin{align*}
+1 - P_e &= 1 - \sum_i P_e(i) \Pr\{f(X) = i\} \\
+        &= 1 - \sum_i P_e(i) \Pr\{X \in X_i\} \\
+        &\leq 1 - \sum_i \left( 1 - \frac{\Pr\{X = x^*_i\}}{\Pr\{X \in X_i\}} \right) \Pr\{X \in X_i\} \\
+        &= 1 - \sum_i \Pr\{X \in X_i\} + \sum_i \Pr\{\vec X = x^*_i\} \\
+        &= 1 - 1 + \sum_i \Pr\{X = x^*_i\} \\
+        &= \sum_i \Pr\{\vec X = x^*_i\}.\\
+        &\to 0
+\end{align*}
+ \end{proof}
+ \subsection*{5.5 Alternative defintion of weak typicality}
+ Let $\vec X= (X_1,X_2,\dots,X_n)$ be an iid sequence of random variable $X$, distributed with $p(x)$. Let $q_x$ be the empirical distribution of the sequence $\vec x$, i.e. $q(x)=n^{-1}N(x;\vec x)$ where $N(x;\vec x)$ is the number of the occurrence of $x$ in $\vec x$.
+ \\
+ a) Show that for any $\vec x\in \X^n$, \[
+ -\frac{1}{n}\log p(\vec x)= D(q_x||p)+H(q_x).
+ \]
+ \begin{proof}
+     \begin{align*}
+         -\frac{1}{n}\log p(\vec x) &= -\frac{1}{n}\log p(x_1)\times \dots\times p(x_n)\\
+         &=-\frac{1}{n}\sum_{i=1}^n\log p(x_i)    
+     \end{align*}
+     \begin{align*}
+         D(q_x||p) + H(q_x) &= \sum_{x} q(x)(\log\frac{q(x)}{p(x)} - \log q(x))\\
+         &= -\sum_{x}q(x)\log p(x)\\
+         &=-\sum_{x}-\frac{1}{n}N(x;\vec x)\log p(x)\\
+         &=-\frac{1}{n}\log \prod_{x}p(x)^{N(x;\vec x)}\\
+         &=-\frac{1}{n}\log p(\vec x)
+     \end{align*}
+ \end{proof}
+ b) Show that for any $\epsilon > 0$, the weakly typical set $W^{n}_{\epsilon}$ with respect to $p(x)$ is the set of sequences $\vec x\in \X^n$ such \[
+ |D(q||p) + H(q) - H(p)|\leq \epsilon
+ \]
+ \begin{proof}
+     \begin{align*}
+         &\vec x \in W\\
+         &\implies |-\frac{1}{n}\log p(\vec x)-H(p)\leq \epsilon|\\
+         &\implies |D(q||p) + H(q) - H(p)|\leq \epsilon
+     \end{align*}
+     by part a
+ \end{proof}
+ c) Show that for sufficiently large $n$, \[
+ Pr\{|D(q||p)+H(q)-H(p)\leq |\} > 1-\epsilon
+ \]
+ This is by theorem 5.3.
+
+
+ 
+ \subsection*{5.9 Universal source coding}
+ Let $F=\{\{X_k^{(s)}, k\geq 1\}: s\in \S\}$ be a family of iid information sources indexed by a finite set $\S$ with a common alphabet $\X$. Define \[
+ \Bar{H} = \max_{s\in \S}H(X^{(s)})
+ \] where $X^{(s)}$ is the generic random variable for $\{X^{(s)}_k, \, k \geq 1\}$ and \[
+ A_n^{(\epsilon)}(S) = \bigcup_{s \in S} W^{n}_{[X^{(s)}]^{\epsilon}}
+ \]
+ a) Prove that for all \(s \in S\),
+\[
+\Pr\{X^{(s)} \in A_n^{(\epsilon)}(S)\} \to 1 \quad \text{as} \quad n \to \infty,
+\]
+where \(X^{(s)} = (X^{(s)}_1, X^{(s)}_2, \cdots, X^{(s)}_n)\).
+\begin{proof}
+    Let \(s \in S\), if \(s\) is the source that actually generates the sequence \(\vec X\),
+then by the weak AEP, 
+\[
+\Pr\{X \in W_n[X^{(s)}]^{\epsilon}\} \to 1 \quad \text{as} \quad n \to \infty.
+\]
+Because we UNIONed all the typical sets
+\[
+W_n[X^{(s)}]^{\epsilon} \subset A_n^{(\epsilon)}(S), 
+\]
+it follows that
+\[
+\Pr\{X \in A_n^{(\epsilon)}(S)\} \to 1 \quad \text{as} \quad n \to \infty,
+\]
+and $X$ can be generated by any source $s\in\S$.
+\end{proof}
+b) Prove that for any $\epsilon' > \epsilon$, \[
+|A^{n}(\S)_\epsilon| \leq  2^{\Bar{H}+\epsilon'}
+\]
+\begin{proof}
+    By weak AEP, for each $s\in\S$, \[
+    |W^{n}_{X^{s}_\epsilon}| \leq 
+    \]
+    so \begin{align*}
+    |A|&\leq \sum_s 2^{nHX^{(s)}+\epsilon}\\
+    &\leq 2^{n\max_s H(X^{(s)})+\epsilon'}
+    \end{align*}
+    for any \textbf{$\epsilon'>\epsilon$} when $n$ is sufficiently large.
+\end{proof}
+c) Suppose we know an information source is in the family $F$ but we don't know which one it is. Devise a compression scheme for the information source such that it is asymptotically optimal for every possible source in $F$:
+Encode $\vec X\in \X^n$ as follows: Let $\S'\subset \S$ contain all $s\in\S$ such that $\vec X\in W^{n}_{X^(s)}.$ If $\S'$ is non-empty, i.e. $\vec X\in A$, find the $s*\in\S'$ such that $\min_sH(X^{(s)})$ is achieved. Specifying $s^*$ takes at most $\log |S| + 1$ bits. To specify the particular sequence in $W^{n}_{X^{(s^*)}}$ that $\vec X$ is equal to, this takes at most $n(H(X^{s^*})+\epsilon)$ bits. The second part of the codeword depends on $s^*$. $If \S'$ is empty, we return error.
+ \end{document}

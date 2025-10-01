@@ -1,0 +1,196 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Signal Processing and Vector Spaces}
+\section{Language of vector space}
+\begin{itemize}
+    \item Using the language of vector space, we get easier explanation for Fourier transform, sampling and interpolation.
+    \item We are interested in $l_2(\Z)$: space of square-summable infinite sequences. $L_2([a,b])$: space of square-integrable functions over an interval.
+    \item For signals, we usually define the inner product as the integral of the product: \[
+    \langle x,y\rangle = \int_{-1}^{1}x(t)y(t)\dd t
+    \]
+    \item We can verify that $x=\sin(\pi t)$ is a unit vector, i.e. \[
+    \int_{-1}^{1}\sin^2(\pi t)\dd t = 1
+    \] (in case you forgot math 1B, use the double angle formula.)
+    \item Note that $1-|t|$ is symmetric and $\sin(\pi t)$ is antisymmetric, so the area of their product cancel out and so the inner product of them is zero, meaning that we cannot express any symmetric function using only antisymmetric functions.
+    \item The mean square error is the square distance\[
+    \|x-y\|^2 = \int_{-1}^1|x(t)-y(t)|^2\dd t
+    \]
+\end{itemize}
+\subsection*{Signal Spaces}
+\begin{itemize}
+    \item Finite-length and periodic signals live in $\bC^N$: $\vec x=[x_0,\dots,x_{N-1}]^T$
+    \item The inner product is: \[
+    \langle \vec x,\vec y\rangle = \sum_{n=0}^{N-1}\Bar{x}[n]y[n]
+    \] (we don't worry about the conjugate if we just deal with real signals.)
+    \item For infinite-length signals, the inner product can easily explode: therefore, we require the sequences to be square-summable: $\sum |x[n]|^2 < \infty$, i.e. they have finite energy.
+    \item The space of square-summable sequences is denoted by $l_2(\bZ)$.
+    \item We also need \textit{Completeness}, i.e. Cauchy sequence converges to some vector.
+    \item A Hilbert space is what we want: a vector space with an inner product and is complete.
+\end{itemize}
+\subsection*{Bases}
+\begin{itemize}
+    \item Fourier bases for functions over an interval: \[
+    \frac{1}{\sqrt{2}}, \cos(n\pi t), \sin(n\pi t), n\in \bN
+    \]
+    \item e.g. Consider \[
+    \sum_{k=0}^N\frac{\sin(2k+1)\pi t}{2k+1}
+    \] converges to the square wave.
+    \item Change of basis is convenient if we have orthonormal basis. e.g. \[
+    \vec x = \sum_{k=0}^{K-1}\alpha_k \vec w^{(k)}=\sum_{k=0}^{K-1}\beta_k\vec v^{(k)}
+    \]
+    If $\{v^{(k)}\}$ is orthonormal, then \begin{align*}
+        \beta_h &=\langle v^{(h)}, \vec x\rangle\\
+        &=\langle v^{(h)},\sum_{k=0}^{K-1}\alpha_k \vec w^{(k)} \rangle\\
+        &=\sum_{k=0}^{K-1}\alpha_k\langle v^{(h)},w^{(k)}\rangle
+    \end{align*}
+\end{itemize}
+\subsection{Subspace based approximations}
+\begin{itemize}
+    \item Nothing special here, just least-square approximation, which uses the idea of orthogonal projection (best approximation over a subspace in the sense that it has the minimum-norm error; the error vector is orthogonal to the subspace.)
+\end{itemize}
+\subsection{Polynomial approximation}
+\begin{pbox}{{Approximate $\sin t\in L_2[-1,1]$ over $P_3[-1,1]$}}
+    \begin{enumerate}
+        \item We'll see that the projection is a better estimation than Taylor series.
+        \item We first obtain an orthonormal basis for $P_3[-1,1]$ from the most intuitive basis $\{1,t,t^2,t^3\}$.
+        \item Since $\|p_0\|=2$, we let $u_0=\sqrt{1/2}$.
+        \item Since the second vector is orthogonal to the first vector, we just let $u_1=\sqrt{3/2}t$.
+        \item The third vector $t^2$ is not orthogonal to $\sqrt{1/2}$: \[
+        \int_{-1}^1 t^2/\sqrt{2}=\frac{2}{3}\sqrt{2}.
+        \]
+        Continue the Gram-schimdt process, we let $u_2=\sqrt{\frac{5}{8}}(3t^2-1)$
+        \item The Gram-Schmidt algorithm leads to an orthonormal basis for $P_N([-1,1])$ called the Legendre polynomials.
+        \item The projection of $\sin t$ over $P_3[-1,1]$ is $\approx 0.9035 t$. The Taylor series gives $\sin t\approx t$.
+        \item $\|\sin t - 0.9035 t\|\approx 0.0337$ while $\|\sin t -t\|\approx 0.0857$.
+    \end{enumerate}
+\end{pbox}
+\section{The Frequency Domain}
+\begin{itemize}
+    \item Fun fact: the human body can detect sinusoids. We have 2 sinusoid receptors: the cochlea (inner ear) for air pressure sinusoids and rods and cones (retina) for electromagnetic sinusoids.
+    \item Question: can we decompose any signal into sinusoidal elements? Answer: yes, through Fourier analysis. 
+    \item Analysis is to find the contribution of different frequencies. The pupose of Fourier analysis is to understand a signal in terms of its sinusoidal components. Synthesis is to create signals with known frequency content.
+\end{itemize}
+\section{The Fourier Basis for $\mathbb{C}^N$}
+\begin{bbox}{The Fourier Basis}
+    Claim: the set of $N$ signals in $\bC^N$ \[
+    w_k[n] = e^{j\frac{2\pi}{N}nk}, \quad n,k=0,1,\dots, N-1
+    \] forms an orthogonal basis in $\bC^N$.
+    \begin{itemize}
+        \item $w_k$ is a complex exponential generating machine at a frequency $\frac{2\pi k}{N}$.
+    \end{itemize}
+    \begin{proof}
+        \begin{enumerate}
+            \item To prove orthogonality: \begin{align*}
+                \langle w^{(k)},w^{(h)}\rangle &= \sum_{n=0}^{N-1}(e^{-j\frac{2\pi}{N}nk})*e^{j\frac{2\pi}{N}nh}&\text{note that we take the conjugate}\\
+                &=\sum_{n=0}^{N-1}e^{j\frac{2\pi}{N}(h-k)n}\\
+                &= \frac{1-e^{j2\pi(h-k)}}{1-e^{j\frac{2\pi}{N}(h-k)}}&\text{by geometric series}\\
+                &= 0 &\text{since $h-k\neq 0$ is an integer }
+            \end{align*}
+            \item $N$ orthogonal vectors form a basis for $\bC^N$
+            \item Note that the Fourier basis is not normal. The normalizing coefficient is $\frac{1}{\sqrt{N}}$.
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\section{Discrete Fourier Transform}
+\begin{itemize}
+    \item Recall that in signal notation: $w_k[n]=e^{j\frac{2\pi}{N}nk}, \quad n,k=0,1,\dots, N-1$.
+    \item In vector notation: $\{\vec w^{(k)}\}_{k=0,1,\dots, N-1}$ with $w_n^{(k)}=e^{j\frac{2\pi}{N}nk}$.
+    \item These guys form an orthogonal basis, but each of them has a normalizing coefficient of $\frac{1}{\sqrt{N}}$.
+    \item Analysis formula (Given a function $\vec x$, re-express $\vec x$ in terms of the Fourier basis. Decompose a signal into different frequencies): \[
+    X_k = \langle \vec w^{(k)}, \vec x\rangle
+    \]
+    \item Synthesis formula (Create signals with known frequencies): \[
+    \vec x = \frac{1}{N}\sum_{k=0}^{N-1}X_k\vec w^{(k)}.
+    \]
+    \item The discrete Fourier transform is nothing else than a change of basis.
+    \item In signal notation, the analysis formula is: \[
+    X[k]=\sum_{n=0}^{N-1}x[n]e^{-j\frac{2\pi}{N}nk}, k=0,1,\dots, N-1
+    \]
+    \item In signal notation, the synthesis formula: \[
+    x[n]=\frac{1}{N}\sum_{k=0}^{N-1}X[k]e^{j\frac{2\pi}{N}nk},\quad n=0,1,\dots, N-1
+    \]
+\end{itemize}
+\section{Examples of Discrete Fourier Transform}
+\begin{remark}
+    Since the DFT is a change of basis, it's a linear operator.
+\end{remark}
+\begin{pbox}{Discrete Fourier Transform of the Delta Function}
+Let $x[n]=\delta[n]$.
+\begin{itemize}
+    \item To compute the inner product, \[
+    X[k]=\sum_{n=0}^{N-1}\delta[n]e^{-j\frac{2\pi}{N}nk} = 1
+    \]
+    since the delta function isolates the zeros component of each basis vector.
+    \item Therefore, the delta contains all frequencies over the possible range of frequencies. 
+    \end{itemize}
+    Now consider $x[n]=1$, \begin{itemize}
+        \item \[
+        X[k]=\sum_{n=0}^{N-1}e^{-j\frac{2\pi}{N}nk} = N\delta[k].
+        \]
+    \end{itemize}
+\end{pbox}
+\begin{pbox}{DFT of a sinusoid}
+Let $x[n]=3\cos\left(\frac{2\pi}{16}n\right), \quad x[n]\in \bC^64$, so $N=64$. 
+\begin{align*}
+    x[n] &= 3\cos\left(\frac{2\pi}{16}n\right)\\
+    &= 3\cos \left(\frac{2\pi}{64}4n\right)\\
+    &= \frac{3}{2}\left[e^{j\frac{2\pi}{64}4n}+e^{-j\frac{2\pi}{64}4n}\right]\\
+    &= \frac{3}{2}\left[e^{j\frac{2\pi}{64}4n}+e^{j\frac{2\pi}{64}60n}\right]\\
+    &=\frac{3}{2}(w_4[n]+w_{60}[n])
+\end{align*}
+    \begin{align*}
+        X[k] &= \langle w_k[n], x[n]\rangle\\
+        &=\langle w_k[n],\frac{3}{2}(w_4[n]+w_{60}[n])\rangle \\
+        &=\frac{3}{2}\langle w_k[n],w_4[n]\rangle + \frac{3}{2}\langle w_k[n],w_{60}[n]\\
+        &= \begin{cases}
+            96 \quad &\text{for $k=4,60$}\\
+            0\quad&\text{otherwise}
+        \end{cases}
+    \end{align*}
+\end{pbox}
+\begin{pbox}{DFT of sinusoid with phase shift}
+\begin{align*}
+    x[n] &=3\cos \left(\frac{2\pi}{16}n+\frac{\pi}{3}\right)\\
+    &=3\cos \left(\frac{2\pi}{64}4n + \frac{\pi}{3}\right)\\
+    &=\frac{3}{2}\left[e^{j\frac{2\pi}{64}4n}e^{j\frac{\pi}{3}}+e^{-j\frac{2\pi}{64}4n}e^{-j\frac{\pi}{3}}\right]\\
+    &=\frac{3}{2}\left[w_4[n]e^{j\frac{\pi}{3}}+w_{60}[n]e^{-j\frac{\pi}{3}}\right]
+\end{align*}
+\begin{remark}
+    For DFT of general function, we follow the algorithm and can compute the DFT numerically. 
+\end{remark}
+\end{pbox}
+\begin{pbox}{DFT of $M$-step function}
+    Let $x[n]=\sum_{h=0}^{M-1}\delta[n-h],\quad n=0,1,\dots,N-1$.
+    \begin{align*}
+        X[k]&=\sum_{n=0}^{N-1}x[n]e^{-j\frac{2\pi}{N}nk}\\
+        &=\sum_{n=0}^{M-1}x[n]e^{-j\frac{2\pi}{N}nk}\\
+        &=\frac{1-e^{-j\frac{2\pi}{N}kM}}{1-e^{-j\frac{2\pi}{N}k}}\\
+        &= e^{-j \frac{\pi}{N} k M} \left[ \frac{e^{j \frac{\pi}{N} k M} - e^{-j \frac{\pi}{N} k M}}{e^{j \frac{\pi}{N} k} - e^{-j \frac{\pi}{N} k}} \right]\\
+        &= \frac{\sin\left( \frac{\pi}{N} M k \right)}{\sin\left( \frac{\pi}{N} k \right)} e^{-j \frac{\pi}{N} (M - 1) k}
+    \end{align*}
+\end{pbox}
+\section{DFT interpretation}
+\begin{itemize}
+    \item Like before, consider finite-time signals with time range $N$. $X[k]$ for $k=0,\dots,N/2$ corresponds to frequencies less than $\pi$. $X[k]$ for $k=N/2,\dots,N$ corresponds to frequencies greater than $\pi$. Frequencies centered around $N/2$ correspond to the fastest frequencies. 
+    \item Consider $x[n]=1$ for all $n$, the unit signal. It is the slowest signal. Its fourier transform only contains the lowest frequency coefficient. $k=0$ means absence of movement.
+    \item Consider $x[n]=\cos \pi n = (-1)^n$. It is the fastest signal. It only has one nonzero weight for the fourier basis, which corresponds to the vector with hightest frequency.
+    \item Recall Parseval's theorem (also known as Rayleigh's energy theorem from the information theory section of this note), which says Fourier transformation is unitary. We have that \[
+    \sum_{n=0}^{N-1}|x[n]|^2=\frac{1}{N}\sum_{k=0}^{N-1}|X[k]|^2
+    \]
+    This tells us that the signal's energy at a given frequency is proportional to the magnitude of the DFT coefficient at that point.
+\end{itemize}
+\begin{remark}
+    For real signals, the DFT is symmetric in magnitude, i.e. \[
+    |X[k]|=|X[N-k]|
+    \]
+    This is because the complex components need to cancel out.
+\end{remark}
+\section{DFT Analysis}
+\begin{itemize}
+    \item If a signal has an associated system clock $T_s$ (time between samples)(or in terms of frequency $F_s=\frac{1}{T_s}$), we can map the sample index $k$ of the DFT weights/coefficients to real-world frequencies: the continuous frequency corresponding to sample index $k$ is given by $\frac{k F_s}{N}$.
+    \item The largest frequency $N/2$ corresponds to the largest continuous frequency $F_s/2$. It takes 2 samples to do a full revolution.
+\end{itemize}
+
+\section{DFT Synthesis}
+
+\end{document}

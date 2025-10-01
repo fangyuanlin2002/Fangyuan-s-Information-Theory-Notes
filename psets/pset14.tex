@@ -1,0 +1,88 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 14}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+
+
+\subsection*{11.1 Properties of Capacity $C(P)$}
+\begin{enumerate}
+    \item $C(P)=\frac{1}{2}\log(1+\frac{P}{N})$ is non-decreasing: \begin{proof}
+        This is because $\log$ is non-decreasing. Also by allowing a greater $P$, the optimization problem is over a bigger set so the solution $C(P)$ would be greater.
+        \end{proof}
+    \item $C(P)$ is concave: \begin{proof}
+        Look at the second derivative and see if it's non-positive.
+        \[
+        \frac{\dd C}{\dd P}=\frac{1}{2}\frac{1}{P+N}
+        \] and \[
+        C''(P)=-\frac{1}{2}\frac{1}{(P+N)} < 0.
+        \]
+    \end{proof}
+    \item $C(P)$ is continuous: 
+    \begin{proof}
+        This follows from the continuity of $\log$.
+    \end{proof}
+\end{enumerate}
+\subsection*{11.6 Calculation of the channel capacity}
+Consider a system Gaussian of channels with noise vector $\vec Z\sim (\vec 0, K_{\vec Z})$ and input power constraint of $3$. Determine the capacity of the system for the following correlation matrices:
+\begin{itemize}
+    \item \[
+    K_{\vec Z}=\begin{bmatrix}
+        4 & 0 & 0\\
+        0 & 5 & 0\\
+        0 & 0 & 2
+    \end{bmatrix}
+    \]
+    \begin{proof}
+        \begin{enumerate}
+            \item The water filling constant is $\nu$ such that \[
+            (\nu - 4)^+ +(\nu-5)^+ +(\nu-2)^+ =3
+            \] where the solution is \[
+            \nu = 4.5.
+            \]
+            \item Then the capacity is \[
+            C(3) = \frac{1}{2}\left[\log\left(1+\frac{4.5-4}{4}\right) + \log\left(1+\frac{4.5-2}{2}\right)\right]
+            \]
+        \end{enumerate}
+    \end{proof}
+    \item \[
+    K_{\vec Z} = \begin{bmatrix}
+        7/4 & \sqrt{2}/4 & -3/4\\
+        \sqrt{2}/4 & 5/2 & -\sqrt{2}/4 \\
+        -3/4 & -\sqrt{2}/4 & 7/4
+    \end{bmatrix}
+    \]
+    \begin{proof}
+        \begin{enumerate}
+            \item This a uncorrelated system, but we can always decorrelate it while maintaining the same channel capacity.
+            \item The eigenvalues of the given positive semidefinite matrix are $1,2,3$.
+            \item Therefore, the water-filling constant \[
+            \nu = 3
+            \]
+            \item Then apply the same formula as before to get \[
+            C(3) = \frac{1}{2}\left[\log(1-\frac{3-1}{1}) + \log(1+\frac{3-2}{2})\right]
+            \]
+        \end{enumerate}
+    \end{proof}
+    \end{itemize}
+\subsection*{11.7 Optimal input distribution for correlated Gaussian system}
+In the system of correlated Gaussian channels, let $K_{\vec Z}$ be diagonalized as $Q\Lambda Q^T$ by spectral theorem. Let $A^*$ be the $k\times k$ diagonal matrix with $a_i^*$ on the diagonal, where $a_i^*$ is the optimal power allocated to the $i$th channel. Show that $\N(0,QA^*Q^T)$ is the optimal input distribution.
+\begin{proof}
+    \begin{enumerate}
+        \item Goal: verify that the proposed input distribution achieves the channel capacity.
+        \item We compute $K_{\vec Y}$: \begin{align*}
+            K_{\vec Y} &= K_{\vec X}+K_{\vec Z} \quad \text{by independence of $\vec X$ and $\vec Z$}\\
+            &= Q A^* Q^T + Q\Lambda Q^T \quad\text{by assumption}\\
+            &= Q(A^*+\Lambda)Q^T \quad\text{Distribute}
+        \end{align*}
+        \item Now we compute the mutual information and we check that it is maximized: \begin{align*}
+            \I(\vec X,\vec Y) &= h(\vec Y)-h(\vec Y|\vec X)\\
+            &=h(\vec Y)-h(\vec Z|\vec X) \quad\text{by a previous lemma}\\
+            &=h(\vec Y)-h(\vec Z)\\
+            &= \frac{1}{2}\log(2\pi e\det K_{\vec Y})-\frac{1}{2}\log(2\pi e\det K_{\vec X})\\
+            &=\frac{1}{2}\log(\det(Q(A^*+\Lambda)Q^TQ\Lambda^{-1}Q^T))\\
+            &=\frac{1}{2}\log \det(A^*\Lambda^{-1}+I)\\
+            &=\frac{1}{2}\sum_{i=1}^k\log(1+\frac{a_i^*}{\lambda_i}) \quad\text{here determinant is the product of diagonal entries}
+        \end{align*}
+    \end{enumerate}
+\end{proof}
+\end{document}

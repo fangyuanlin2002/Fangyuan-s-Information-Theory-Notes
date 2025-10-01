@@ -1,0 +1,214 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Transmission in Continuous Time}
+We have will now study continuous-time transmission, which is true for all real channels at the physical layer.
+\section{The Bandlimited White Gaussian Channel}
+\begin{itemize}
+    \item We now consider transmission of information in continuous time.
+    \item Consider input variable (process) $X(t)$ and noise process $Z(t)$ added to $X(t)$. 
+    \item The sum of $X(t)$ and $Z(t)$ is passed through a filter, with bandwidth $W$. The output of the filter $Y(t)$ is the output of the channel.
+    \item Here, $Z(t)$ is a zero-mean white Gaussian nosie process with power spectral density $S_Z(f)=\frac{N_0}{2}$ ($f$ is from minus infinity to infinity), called an \textit{additive white Gaussian noise AWGN}
+\end{itemize}
+\section{Signal Analysis Prelim}
+\begin{gbox}{Fourier Transform}
+    The Fourier transform of a signal $g(t)$ is defined as \[
+    G(f)=\int_{\infty}^\infty g(t) e^{-j2\pi f t}\dd t
+    \]
+    \begin{itemize}
+        \item The signal $g(t)$ can be recovered from the Fourier transform $G(f)$ by: \[
+        g(t) = \int_{\infty}^\infty G(f) e^{j2\pi ft}\dd f
+        \] and $g(t)$ is called the inverse Fourier transform of $G(f)$. The functions $g(t)$ and $G(f)$ are said to be a transform pair $g(t)\leftrightarrow G(f)$.
+        \item The variables $t$ and $f$ are considered as time and frequency respectively.
+    \end{itemize}
+\end{gbox}
+Below is a special signal of interest.
+\begin{gbox}{Energy Signal}
+    A signal $g(t)$ is called an energy signal if \[
+    \int_{-\infty}^\infty |g(t)^2|\dd t < \infty,
+    \] i.e. the energy of the signal is finite.
+    \begin{itemize}
+        \item The Fourier transform of an energy signal always exists.
+    \end{itemize}
+\end{gbox}
+\begin{gbox}{Cross correlation function}
+    Let $g_1(t)$ and $g_2(t)$ be a pair of energy signals. The cross correlation function for $g_1(t)$ and $g_2(t)$ is defined as \[
+    R_{12}(\tau) = \int_{-\infty}^\infty g_1(t)g_2(t-\tau)\dd t,
+    \] where $\tau$ here is a dummy time variable.
+\end{gbox}
+\begin{bbox}{Proposition}
+    For a pair of energy signals $g_1(t)$ and $g_2(t)$, \[
+    R_{12}(\tau) \rightleftharpoons G_1(f) G_2^*(f)
+    \] where $G_2^*(f)$ denotes the complex conjugate of $G_2(f)$.
+\end{bbox}
+\begin{gbox}{Wide-sense Stationary Process}
+    A process $\{X(t),-\infty < t <\infty\}$ is wide-sense stationary if $\bE X(t)$ does not dependent on $t$ and $\bE[X(t+\tau)X(t)]$ (autocorrelation) only depends on $\tau.$
+\end{gbox}
+\begin{gbox}{Autocorrelation function and spectral density}
+    For a wide-sense stationary process $\{X(t),-\infty < t <\infty\}$, the autocorrelation function is defined as \[
+    R_X(\tau) = \bE[X(t+\tau)X(t)]
+    \] which does not dependent on $t$, and the power spectral density is defined as the Fourier transform of the autocorrelation function \[
+    S_X(f) = \int_{-\infty}^{\infty}R_X(\tau)e^{-j2\pi f\tau}\dd \tau.
+    \]
+    \[
+    R_X(\tau) \rightleftharpoons S_X(f)
+    \]
+\end{gbox}
+\begin{gbox}{Bivariate wide-sense stationary process}
+    Let $\{(X(t), Y(t)),-\infty < t <\infty\}$ be a bivariate wide-sense stationary process. Their cross-correlation functions are defined as \[
+    R_{XY}(\tau) = \bE[X(t+\tau)Y(t)]
+    \] and \[
+    R_{YX}(\tau) =\bE[Y(t+\tau)X(t)]
+    \] which do not dependent on t. The corresponding cross-spectral densities are defined as the Fourier transform of the above functions.
+\end{gbox}
+\begin{bbox}{An equivalent model for the channel}
+    \begin{itemize}
+        \item Our original model of the channel is that input $X(t)$ and noise $Z(t)$ are summed together and passed through a filter. 
+        \item Alternatively, we can pass $X(t)$ through a filter to get $X'(t)$ and pass $Z(t)$ through a filter to get $Z'(t)$. Then we sum up $X'(t)$ and $Z'(t)$ to get $Y(t)$.
+        \item Both $X$ and $Z$ are bandlimited to $[0,W]$. $Z'(t)$ is a bandlimited white Gaussian noise with power spectral density $S_Z'(f)$ equal to $\frac{N_0}{2}$ for $f\in[-W,W]$ and $0$ otherwise.
+    \end{itemize}
+\end{bbox}
+The following is the celebrated sampling theorem.
+\begin{bbox}{Nyquist-Shannon Sampling Theorem}
+    Let $g(t)$ be a signal with Fourier transform $G(f)$ that vanishes for $f\in[-W,W]$, i.e. the highest frequency that $g(t)$ can have is $W$. Then $g(t)$ can be reconstructed from the sample as \[
+    g(t) =\sum_{i=-\infty}^\infty g(\frac{i}{2W})sinc(2Wt-i)
+    \] for $-\infty < t <\infty$, where \[
+    sinc(t) = \frac{\sin(\pi t)}{\pi t}.
+    \]
+    By continuity, the sinc function is defined to be $1$ at $t=0$.
+    \begin{itemize}
+        \item The signal $g(t)$ is sampled at a rate equals to $2W$, called the Nyquist rate.
+        \item The sinc function = 0 for every integer $t=i\neq 0$.
+        \item \[
+        sinc(2Wt -i)=sinc(2W(t-\frac{i}{2W}))=\begin{cases}
+            1 \quad t=\frac{i}{2W}\\
+            0 \quad t=\frac{j}{2w}, j\neq i
+        \end{cases},
+        \] i.e. the func function vanishes at every sample point except for $t=\frac{i}{2w}$.
+        \item Let $g_i=\frac{1}{\sqrt{2W}}g(\frac{i}{2W})$ and \[
+        \psi_i(t)=\sqrt{2W} sinc(2Wt-i).
+        \] Then \[
+        g(t) =\sum_{i=-\infty}^\infty g_i \psi_i(t)
+        \]
+        \begin{remark}
+            Proposition: The functions \[
+        \psi_i(t)=\sqrt{2W} sinc(2Wt-i), -\infty < i <\infty
+        \] form an orthonormal basis for signals which are bandlimited to $[0,W]$.
+        \begin{proof}
+        \begin{enumerate}
+            \item Consider \[
+            \psi_i(t)=\sqrt{2W}sinc(2W(t-\frac{i}{2W}))
+            \] and $psi_0(t)=\sqrt{2W}sinc(2Wt)$. Therefore, \[
+            \psi_i(t)=\psi_0(t-\frac{i}{2W}),
+            \] and so $\psi_i(t)$ and $\psi_0(t)$ have the same energy for all $i$ because they are translations of one another.
+            \item Consider $sinc(2Wt)\rightleftharpoons \frac{1}{2W}rect(\frac{f}{2W})$ where \[
+            recf =\begin{cases}
+                1 \quad -\frac{1}{2} \leq f \leq \frac{1}{2}\\
+                0 \quad \text{otherwise.}
+            \end{cases}
+            \]
+            \item Then by Rayleigh's energy theorem, the energy of the signal $sinc(2Wt)$ in the time domain and the energy of the signal $\frac{1}{2W}rect(\frac{f}{2W})$ are the same, so we have \[
+            \int_{-\infty}^\infty sinc^2(2Wt)\dd t = (\frac{1}{2W})^2\int_{-\infty}^\infty rect^2(\frac{f}{2W})\dd f
+            \] which is equal to \[
+            (\frac{1}{2W})^2(2W) =\frac{1}{2W}.
+            \]
+            \item The integral of $sinc^2$ is difficult to evaluate directly but Rayleigh's theorem provides an easy shortcut.
+            \item Then it follows that \[
+            \int_{-\infty}^\infty \psi_i^2(t)\dd t=\int_{-\infty}^\infty \psi_0^2(t)\dd t=1
+            \]
+            \item For $i\neq i'$, we have that both $sinc(2Wt-i)$ and $sinc(2Wt-i')$ have finite energy. consider their cross-correlation function \[
+            R_{ii'}(\tau) = \int_{-\infty}^\infty sinc(2Wt-i)sinc(2W(t-\tau)-i')\dd t.
+            \]
+            \item Now $sinc(2Wt-i) \rightleftharpoons e^{-j2\pi f(\frac{i}{2W})}(\frac{1}{2W})rect(\frac{f}{2W}):=G_i(f)$.
+            \item Then $R_{ii'}(\tau)\rightleftharpoons G_i(f)G_{i'}^*(f)$.
+            \item $R_{ii'}(0)=0$ for $i\neq i'$. (computation omitted)
+            \item Therefore, for $i\neq i'$, \begin{align*}
+                &\int_{-\infty}^\infty \psi_i(t)\psi_{i'}(t)\dd t \\
+                &=2W\int_{-\infty}^\infty sinc(2Wt-i)sinc(2Wt-i')\dd t\\
+                &=(2W)R_{ii'}(0)\\
+                &=0
+            \end{align*}
+            \item Therefore, $\psi_i(t),i\in(-\infty,\infty)$ has energy $1$ and each pair has cross-correlation function $0$ at $\tau=0$.
+        \end{enumerate}
+            
+        \end{proof}
+        \end{remark}
+    \end{itemize}
+\end{bbox}
+Our next step objective is to compute the capacity of the bandlimited white Gaussian channel.
+\section{Intuitive Treatment of the Bandlimited Channel}
+\begin{itemize}
+    \item Assume the input process $X'(t)$ has a Fourier transform, so that \[
+    X'(t)=\sum_{i=-\infty}^\infty X'_i\psi_i(t)
+    \]
+    \item There is a one-to-one correspondence between the continuous-time process $\{X'(t)\}$ and the discrete-time process $\{\X'_i\}$.
+    \item Similarly, assume the output process $Y(t)$ can be written as \[
+    Y(t)=\sum_{i=-\infty}^\infty Y_i \psi_i(t).
+    \]
+    \item With these assumptions, the waveform channel can be regarded as a discrete-time channel defined at $t=\frac{i}{2W}$, with the $i$th input and output of the channel being $X_i'$ and $Y_i'$ respectively.
+    \item We want to \begin{enumerate}
+        \item understand the effect of the noise process $Z'(t)$ on $Y(t)$ at the sampling points.
+        \item Relate the power constraint on $\{X_i'\}$ to the power constraint on $X'(t)$.
+    \end{enumerate}
+\end{itemize}
+\begin{bbox}{The noise process at the sampling points is Gaussian}
+    $Z'(\frac{i}{2W})$, $-\infty < i <\infty$ are i.i.d. Gaussian random variables with zero mean and variance $N_0W$.
+    \begin{proof}
+        \begin{enumerate}
+            \item $Z'(t)$ is a filtered version of $Z(t)$, so $Z'(t)$ is also a zero-mean Gaussian process.
+            \item $Z'(\frac{i}{2W}), -\infty < i<\infty$ are zero-mean Gaussian random variables. 
+            \item The power spectral density of $Z'(t)$ is a rectrangular function:
+            \[
+                S_{Z'}(f)=\begin{cases}
+                    N_0/2 \quad -W\leq f\leq W\\
+                    0
+                \end{cases} = \frac{N_0}{2}rect(\frac{f}{2W})
+            \]
+        \item $R_{Z'}(\tau)$, the autocorrelation function of $Z'(t)$, is a sinc function: \[
+        S_{Z'}(f)\rightleftharpoons R_{Z'} = N_0Wsinc(2W\tau)
+        \]
+        \item $R_{Z'}(\tau)$ vanishes at $\tau =\frac{i}{2W}$ for every $i\neq 0$: \[
+        R_{Z'}(\frac{i}{2W})=\begin{cases}
+            N_0W \quad i=0\\
+            0\quad i\neq 0.
+        \end{cases}
+        \]
+        \item Then for all $t$ and all $i\neq 0$, $Z'(t+\frac{i}{2W})$ are uncorrelated because \[
+        \bE\left[Z'(t+\frac{i}{2W})Z'(t)\right] = R_{Z'}(\frac{i}{2W})=0.
+        \]
+        \item In particular, letting $t=\frac{i}{2W}$, we see that $Z'(\frac{i}{2W})$ and $Z'(\frac{j}{2W}+\frac{i}{2W})=Z'(\frac{j+i}{2W})$ are uncorrelated, meaning the values of $Z'(t)$ are uncorrelated at any 2 sample points and hence independent.
+        \item Since $Z'(\frac{i}{2W})$ has zero mean, its variance is given by $R_{Z'}(0)=N_0 W$, because \[
+        R_{Z'}(0)=\bE \left[Z'(\frac{i}{2W}+0)Z'(\frac{i}{2W})\right] = var(Z'(\frac{i}{2W}))
+        \]
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\begin{itemize}
+    \item Recall that $Y(t)=\sum_iY_i\psi_i(t)$ and $X'(t)=\sum_iX_i'\psi_i(t)$.
+    \item Let $Z'(t)=\sum_i Z_i'\psi_i(t)$, where $Z'_i=\frac{1}{\sqrt{2W}}Z'(\frac{i}{2W})$.
+    \item Then $Y(t)=X'(t)+Z'(t)$ implies that  \[
+    Y_i = X'_i+Z'_i
+    \] because $\psi_i(t)$ are orthonormal for $-\infty <i<\infty$.
+    \item Since $Z'(\frac{i}{2W})$ are i.i.d. $\sim \N(0,N_0W)$, $Z_i'\overset{i.i.d.}{\sim}\N(0,\frac{N_0}{2})$.
+    \item So the bandlimited white Gussian channel is essentially equivalent to a memoryless Gaussian channel with noise power $\frac{N_0}{2}$.
+    \subsection{Power Constraints}
+    \begin{itemize}
+        \item Denote the average energy of $X_i'$ by $P'$ (i.e. the second moment).
+        \item Since $\psi_i(t), -\infty < i <\infty$ are orthonomral, each has unit energy and their energy adds up: \begin{align*}
+            \int (\psi_i(t)+\psi_j(t))^2\dd t &=\int \psi^2_i(t)+\psi^2_j(t)+2\psi_i(t)\psi_j(t) \dd t\\
+            &=\int \psi^2_i(t) \dd t +\int \psi_j^2(t)\dd t
+        \end{align*}
+        \item Therefore, $X'(t)$ accumulates energy from the samples at a rate equal to $(2W)P'$.
+        \item Consider \[
+        (2W)P' \leq P,
+        \] where $P$ is the average power constraint on the input process $X'(t)$. We then conclude that $P'\leq \frac{P}{2W}$.
+        \item Fianlly, the capacity of the discrete-time channel is \[
+        \frac{1}{2}\log(1+\frac{P}{N_0W})\quad \text{bits per sample}
+        \]
+        \item Since there are $2W$ samples per unit time, the capacity is \[
+        W\log(1+\frac{P}{N_0W})\quad\text{bits per unit time.}
+        \]
+    \end{itemize}
+\end{itemize}
+\section{The Bandlimited Colored Gaussian Channel}
+To be continued later.
+\end{document}

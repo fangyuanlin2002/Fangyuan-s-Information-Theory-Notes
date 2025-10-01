@@ -1,0 +1,109 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+
+\section*{Problem Set 1}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+\subsection*{2.1}
+Let the joint distribution $p(x,y)$ of 2 random variables on $\{1,...,5\}$ be given by \begin{equation*}
+    \frac{1}{25}\begin{bmatrix}
+        1 & 1 & 1 & 1 & 1\\
+        2 & 1 & 2 & 0 & 0\\
+        2 & 0 & 1 & 1 & 1\\
+        0 & 3 & 0 & 2 & 0\\
+        0 & 0 & 1 & 1 & 3
+    \end{bmatrix}
+\end{equation*}
+Because we are given the joint distribution, we start with the joint entropy. We can compute the marginal and conditional distribution to get the rest of the quantities
+\begin{align*}
+    H(X,Y) &= 11\times \frac{1}{25}\log 25 + 4 \times \frac{2}{25} \log \frac{25}{2} + 2\times \frac{3}{25}\log \frac{25}{3}\\
+    &= 2\log 5 - \frac{8}{25}\log 2 - \frac{6}{25}\log 3\\
+    H(X)&=H(Y)=\log 5\\
+    H(X|Y) &= H(X,Y)-H(Y) = \log 5 - \frac{8}{25} 2 -\frac{6}{25}\log 3 = H(Y|X)\\ \text{not true in general}\\
+    I(X;Y)&=\frac{8}{25}\log 2 + \frac{6}{25}\log 3 \hspace{5mm}\text{similar to the de Morgan}
+\end{align*}
+\subsection*{2.2}
+\begin{proposition*}[2.8]
+    $X_1\to X_2\to...\to X_n$ is a Markov chain if and only if $X_1\to X_2\to X_3$, $(X_1,X_2)\to X_3\to X_4$ ... are Markov chains.
+\end{proposition*}
+\begin{proof}
+    This is a typical proof by induction. \\
+    For the only if direction, assume we have a Markov chain. It's trivial that the proposition is true for $n= 1, 2, 3$ (base case). For the induction step, assume the claim is true for $n=m$, we show that the claim is true for $n=m+1$.\\
+    Consider the quantity $p(x_2)p(x_3)\dots p
+    (x_m)p(x_1,\dots,p_{m+1})$. Reduce to pair-wise joint probabilites. Then use law of total probability to get \begin{equation*}
+        p(x_2)\dots p(x_{m})p(x_1,...,x_m)=p(x_1,x_2)\dots p(x_{m-1}, x_m)p(x_m).
+    \end{equation*}
+    This proves Markovianity and then apply inductive hypothesis.
+    For the if direction, consider \begin{align*}
+        p(x_1,...,x_m) &= p(x_1,...,x_{m-1})p(x_m|x_{m-1})\\
+        \vdots\\
+        &=p(x_1,x_2)\dots p(x_m|x_{m-1})
+    \end{align*}
+\end{proof}
+\begin{proposition*}[2.9]
+    $X_1\to X_2\to\dots \to X_n$ forms a Markov chain if and only if the joint distribution is a product of functions of each pair/transition.
+\end{proposition*}
+\begin{proof}
+    This is a generalization of prop 2.5. \begin{align*}
+        p(x_1,\dots, x_n)
+        &=p(x_1,x_2)p(x_3|x_2)\dots p(x_n|x_{n-1}) \hspace{5mm} \text{by Markov property}\\
+        &=\frac{p(x_1,x_2)\dots p(x_{n-1},x_{n})}{p(x_2)\dots p(x_{n-1})}
+    \end{align*}
+    so the $\implies$ direction is proved.\\
+    For the $\impliedby$ direction, just use law of total probability to sum over all $x_j$ for $j\neq i-1$. For the marginal distribution, sum over $x_{i-1}$. Substitute the pair-distribution and the marginal distribution with $f$ and we simplify to get the joint distribution.
+\end{proof}
+\begin{proposition*}[2.19]
+    \begin{align*}
+H(X) - H(X|Y) &= -E \log p(X) + E \log p(X|Y) \\
+&= E \log p(X|Y)p(X) \\
+&= E \log \frac{p(X, Y)}{p(X)p(Y)} \\
+&= I(X; Y)
+\end{align*}
+\end{proposition*}
+\begin{proposition*}[2.21, 2.22]
+    Conditional entropy is equal to conditional self-information.\\
+    Conditional mutual information is the conditional uncertainty left in a random variable given the other variable.\\
+    Again these are quick algebra-doing proofs by converting everything to expectations, similar to proof of Prop 2.19
+\end{proposition*}
+\subsection*{2.3}
+Give an example which shows that pairwise independence does not imply mutual independence.\\
+Solution: Let $X$, $Y$ be coin tosses, and let $Z=X+Y\mod 2$, i.e., $Z$ is the RV representing whether the outcomes are different. We have pairwise independence, but given either 2 of the 3 random variables, the other random variable become deterministic.
+\subsection*{2.4}
+\begin{align*}
+\sum_{x,y,z} p(x, y, z) &= \sum_{y \in S_y} \sum_{x,z} p(x, y)p(y, z)/p(y) \\
+&= \sum_{y \in S_y} \sum_{x,z} p(x, y)p(z|y) \\
+&= \sum_{y \in S_y} \sum_{x} p(x, y) \sum_{z} p(z|y) \\
+&= \sum_{y \in S_y} \sum_{x} p(x, y) \\
+&= \sum_{y \in S_y} p(y) \\
+&= 1.
+\end{align*}
+\subsection*{2.5}
+Linearity of expectation It is well-known that expectation is linear,
+i.e., E[f(X) + g(Y )] = Ef(X) + Eg(Y ), where the summation in an
+expectation is taken over the corresponding alphabet. However, we
+adopt in information theory the convention that the summation in an
+expectation is taken over the corresponding support. Justify carefully
+the linearity of expectation under this convention.\\
+Solution: This is simply doing summation over the support instead of the entire sample space. The 2 summations are exactly same because points not in the support does not contribute to a weighted sum because they have 0 weight.
+\begin{align*}
+E[f(X) + g(Y)] &= \sum_{(x,y) \in S_{XY}} p(x, y)(f(X) + g(Y)) \hspace{5mm}\text{by definition}\\
+&= \sum_{(x,y) \in S_{XY}} p(x, y)f(x) + \sum_{(x,y) \in S_{XY}} p(x, y)g(y) \hspace{5mm}\text{by splitting the sum}\\
+&= \sum_{x \in S_x} \sum_{y : (x,y) \in S_{XY}} p(x, y)f(x) + \sum_{y \in S_Y} \sum_{x : (x,y) \in S_{XY}} p(x, y)g(y) \hspace{5mm}\text{by first summing over one variable and then the other}\\
+&= \sum_{x \in S_X} p(x)f(x) + \sum_{y \in S_Y} p(y)g(y) \hspace{5mm}\text{by law of total probability}\\
+&= E[f(X)] + E[g(Y)].
+\end{align*}
+\subsection*{2.8}Let \( p_k \) and \( p \) be probability distributions defined on a common finite alphabet. Show that as \( k \to \infty \), if \( p_k \to p \) in variational distance, then \( p_k \to p \) in \( L^2 \), and vice versa.\\
+Solution: \begin{align*}
+&\sqrt{\sum_{x} (f(x))^2} < \epsilon \\
+&\Rightarrow \sum_{x} f(x)^2 < \epsilon^2 \\
+&\Rightarrow f(x)^2 < \epsilon \quad \forall x \in X \\
+&\Rightarrow |f(x)| < \sqrt{\epsilon} \quad \forall x \in X \\
+&\Rightarrow \sum_{x} |f(x)| < |X| \sqrt{\epsilon}.
+\end{align*}
+Let $f(x)=p_k(x)-p(x)$, then this shows that convergence in $L_2$ implies convergence in $L_1$ and vice versa. 
+\end{document}
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+So far we have considered discrete problems. However, the transmission time and noises are all continuous. We will now study the information measures for continuous random variables, in particular differential entropy.
+
+\end{document}

@@ -1,0 +1,270 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Strong Typicality}
+\section{Strong AEP}
+The setup is as follows: 
+\begin{itemize}
+    \item $\{X_k\}$ is a sequence of i.i.d. random variables $\sim p(x)$.
+    \item $X$ denotes generic r.v. with entropy $H(X)<\infty$
+    \item $\vec X=(X_1,\dots,X_n)$. Then \[
+    p(\vec X) = p(X_1)\dots p(X_n)
+    \]
+    \item New assumption: $|\X| < \infty$
+    \item Let the base of the logarithm be $2$, so $H(X)$ is in bits.
+\end{itemize}
+Notations:\begin{itemize}
+    \item Let $N(x;\vec x)$ ne the number of occurrences of $x$ in the sequence $\vec x$.
+    \item $n^{-1}N(x;\vec x)$ is called the relative frequency of $x$ in $\vec x$.
+    \item $\{\frac{1}{n}N(x;\vec x): x\in\X\}$ is called the empirical distribution of $\vec x$.
+\end{itemize}
+\begin{pbox}{Example of Empirical Distribution}
+    Let $\vec x=(1,3,2,1,1)$. Then $N(1;\vec x)=3$ and $empircalDist(1)=\frac{3}{5}$.
+\end{pbox}
+\begin{pbox}{Strongly Typical Set}
+    The stronly typical set $T^{n}_{X^{\delta}}$ with respect to $p(x)$ is the set of sequences $\vec x=(x_1,\dots,x_n)\in \X^n$ such that \[
+    N(x;\vec x)=0
+    \] for $x\notin S_X$ and \[
+    \sum_x|\frac{1}{n}N(x;\vec x)-p(x)|\leq \delta
+    \]
+    \begin{remark*}
+        \begin{itemize}
+            \item If $\sum_x|\frac{1}{n}N(x;\vec x)-p(x)|$ is small, then each term $|\frac{1}{n}N(x;\vec x)-p(x)|$ in the summand is also small.
+            \item If $\vec x$ is strongly typical, the empirical distribution of $\vec x$ is approximately equal to the true distribution $p(x)$.
+        \end{itemize}
+    \end{remark*}
+\end{pbox}
+\begin{bbox}{Strong AEP}
+    There exists $\eta > 0$ such that $\eta \to 0$ as $\delta\to 0$ and the following is true:
+    \begin{itemize}
+        \item If $\vec x$ is strongly $\delta$-typical, then \[2^{-n(H(X))+\eta} \leq p(\vec x) \leq 2^{-nH(X)-\eta}
+        \]
+        \item For $n$ sufficiently large, \[
+        Pr(\vec X \in T_\delta) > 1-\delta
+        \]
+        \item For $n$ sufficiently large, \[
+        (1-\delta)2^{n(H(\vec X)-\eta)}\leq |T^{n}_\delta| \leq 2^{n(H(\vec X)+\eta)}
+        \]
+    \end{itemize}
+    The form of the strong AEP is very similar to the form of the weak AEP.
+\end{bbox}
+\begin{proof}
+Idea:
+    If $\vec x$ is strongly typical, then the empirical distribution is "good" (close to the real distribution). If the empirical distribution is "good," the sample entropy should be close to the real entropy, i.e. \[
+    -\frac{1}{n}\log p(\vec x) \approx H(X),
+    \] meaning $p(\vec x)\approx 2^{-nH(X)}$.
+    \newline
+    For any $\vec x \in T^n_\delta$ that is $\delta$ typical, we have \[
+    p(\vec x)=p(x_1)\dots p(x_n) = \prod_{x\in \S_X}p(x)^{N(x;\vec x)} > 0.
+    \] Then consider \begin{align*}
+        \log p(\vec x) &= \sum_x N(x;\vec x)\log p(x)\\
+        &= \sum_x (N(x;\vec x)-np(x)+np(x))\log p(x)\\
+        &=n\sum_x p(x)\log p(x) - n\sum_x(\frac{1}{n}N(x)-p(x))(-\log p(x))\\
+        &=-n [H(X)+\sum_x(\frac{1}{n}N(x)-p(x))(-\log p(x))].
+    \end{align*}
+    Since $\vec x\in T$, \[
+    \sum_x|\frac{1}{n}N(x;\vec x)-p(x)| \leq \delta.
+    \]
+    Now consider the triangle inequality,
+    \begin{align*}
+        &|\sum_{x}(\frac{1}{n}N(x;\vec x)-p(x))(-\log p(x))|\\
+        &\leq \sum_{x}|\frac{1}{n}N(x;
+        \vec x)-p(x)|(-\log p(x))\\
+        &\leq - \log(\min_x p(x))\sum_{x}|\frac{1}{n}N(x;
+        \vec x)-p(x)|\\
+        &\leq -\delta \log(\min_x p(x))\\
+        &=\eta
+    \end{align*} where \[
+    \eta = -\delta\log(\min_xp(x)).
+    \]
+    Therefore, \[
+    -\eta\leq \sum_x(\frac{1}{n}N(x;\vec x)-p(x))(-\log p(x))\leq \eta.
+    \]
+    Then we get the desired inequality by taking exponential.\\
+    Note that $\eta$ tends to $0$ as $\delta$ tends to $0$.\\
+
+    2): By WLLN, with probability tending to $1$, the empirical distribution of $\vec X$ is close to $p(x)$, so by definition $\vec X$ is strongly typical. Consider \begin{align*}
+        N(x;\vec x)=\sum_{k=1}^{n}I_k(x)
+    \end{align*} where $I_k$ is an indicator for the event $X_k=x$. Then $I_k(x)$ are iid and $E(B_k(x))=p(x). $.\\
+    By WLLN, for $n$ sufficiently large, $Pr(|\frac{1}{n}\sum_{k=1}^{n}I_k(x)-p(x)|>\frac{\delta}{|\X|}) < \frac{\delta}{|\X|}$.\\
+    Then consider the probability that for some $x\in \X$, the empirical probability deviates from the true probability, we use the union bound to show is the this probability is upper bounded by $\delta$.\\
+    Note that $\sum_x|\frac{1}{n}N(x;\vec x)-p(x)|>\delta$ implies $|\frac{1}{n}N(x;\vec x)-p(x)|>\frac{\delta}{||\X}$ for some $x$ (at least one of them is greater than the average). We have the desired inequality.
+    \newline
+    3): $ |T| lower_bound(p(\vec x))\leq P(T) \leq 1$
+\end{proof}
+\begin{bbox}{6.3 Probability that a sequence is not strongly typical tends to $0$ exponentially fast}
+    For sufficiently large $n$, there exists $\phi(\delta)>0$ such that \[
+    P(\vec X\notin T^{n}_\delta)) < 2^{-n\phi(\delta)}.
+    \]
+The proof uses the Chernoff bound.
+\end{bbox}
+
+\section*{Strong Typicality versus Weak Typicality}
+\begin{remark*}
+    \begin{itemize}
+        \item Weak Typicality: empirical entropy is close to the true entropy
+        \item Strong Typicality: empirical distribution is close to the true distribution
+        \item Strong typicality $\implies$ weak typicality.
+        \item Weak typicality $\not\Rightarrow$ strong typicality
+        \item Strong typicality works only for finite alphabet, i.e. $|\X|<\infty$, but weak typicality works for any countable alphabet.
+    \end{itemize}
+\end{remark*}
+\begin{bbox}{Strong typicality implies weak typicality}
+If $\vec x\in T^{n}_\delta$, then $x\in W^{n}_{\eta}$ where $\eta \to 0$ as $\delta \to 0$.
+\begin{proof}
+    Let $\vec x$ be strongly $\delta$-typicality, then $2^{-n(H(X)+\eta)}\leq p(\vec x)\leq 2^{-n(H(X)-\eta)}$. Which means $H(X)-\eta \leq -\frac{1}{n}\log p(\vec x)\leq H(X)+\eta$.
+\end{proof}
+\end{bbox}
+\begin{pbox}{Weak Typicality does not imply strong typicality}
+    Consider $X$ with distribution $p$ such that \[
+    p(0)=0.5, p(1)=0.25, p(2)=0.25.
+    \] Consider a sequence $\vec x$ of length $n$ and let $q(x)=n^{-1}N(x;\vec x)$ be the relative frequency of occurrence of symbol $x$ in $\vec x$, where $x=0,1,2$.
+    Consider \begin{align*}
+        -\frac{1}{n}\log p(\vec x) &= -\frac{1}{n}\sum_k \log p(x_k)\\
+        &= -\frac{1}{n}[N(0;\vec x)\log p(0) + N(1;\vec x)\log p(1)+N(2;\vec x)\log p(2)]\\
+        &=q(0)\log p(0)+q(1)\log p(1)+q(2)\log p(2)        
+    \end{align*}
+    While real entropy is \[
+    p(0)\log p(0)+p(1)\log p(1)+p(2)\log p(2)
+    \]
+    If we have half $0$ and half $1$, then the empirical entropy is exactly the same as the true entropy.
+    \end{pbox}
+
+    
+\section{Joint Typicality}
+Setup:
+\begin{itemize}
+    \item $\{(X_k, Y_k)\}$ where $(X_k, Y_k)$ are iid $\sim p(x,y)$
+    \item $(X,Y)$ denotes pair of generic r.v. with entropy $H(X,Y)<\infty$
+    \item $|\X|,|\Y| < \infty$
+\end{itemize}
+Notations
+\begin{itemize}
+    \item Consider $(x,y)\in \X^n\times \Y^n$, let $N(x,y;\vec x,\vec y)$ be the number of occurrences of $(x,y)$ in the pair of sequences $(\vec x, \vec y)$
+    \item $\frac{1}{n}N(x,y;\vec x,\vec y)$ would be the relative frequency of the tuple $(x,y)$
+\end{itemize}
+\begin{pbox}{Strongly jointly typical set}
+The strongly jointly typical set $T^n_{\delta}$ with respect to $p(x,y)$ is the set of sequence pairs $(\vec x, \vec y)$ such that \[
+\sum_x \sum_y|\frac{1}{n}N(x,y;\vec x,\vec y)-p(x,y)|\leq \delta
+\]    
+\end{pbox}
+\begin{bbox}{Consistency}
+    If $(\vec x, \vec y)$ is jointly typical, then $\vec x$ and $\vec y$ are both marginally typical.
+\end{bbox}
+\begin{bbox}{Preservation}
+    Let $Y=f(X)$. If \[
+    \vec x =(x_1,\dots,x_n)\in T_X
+    \], then $f(\vec x)=(y_1,\dots,y_n)\in T_Y$ where $y_i=f(x_i)$
+\end{bbox}
+\begin{bbox}{Strong JAEP}
+    Let $(\vec X,\vec Y)$ be a pair of sequences of iid tuple, then there exists $\lambda>0$ such that $\lambda\to 0$ as $\delta\to 0$ and the following hold:
+    \begin{itemize}
+        \item If $(\vec x,\vec y)\in T$, then \[
+        2^{-nH(X,Y)+\lambda}\leq p(\vec x,\vec y)\leq 2^{-n(H(X,Y)-\lambda}
+        \] 
+        \item For n sufficiently large, \[
+        Pr((\vec X,\vec Y) \in T)>1-\delta
+        \]
+        \item For $n$ sufficiently large, \[
+        (1-\delta)2^{n(H(X,Y)-\lambda)}\leq |T|\leq 2^{nH(X,Y)+\lambda}
+        \]
+    \end{itemize}
+\end{bbox}
+\begin{bbox}{Stirling's Approximation}
+    \[
+    \ln n! \approx n\ln n
+    \]
+    \begin{proof}
+        \[
+        \ln n!=\ln 1+\dots+\ln n
+        \]
+        Since $\ln x$ is monotonically increasing, we have \[
+        \int_{k-1}^k
+\ln x \dd x < \ln k <  \int_{k}^{k+1}
+\ln x \dd x\]
+    \end{proof}
+Sum over $1\leq k\leq n$, we have \[
+        \int_{0}^n
+\ln x \dd x < \ln k <  \int_{1}^{n+1}
+\ln x \dd x\]
+ie \[
+n\ln n-n< \ln n!<(n+1)\ln (n+1)-n
+\]
+\end{bbox}
+\begin{bbox}{Binomial coefficient}
+    \[
+    \binom{n}{np,n(1-p)}\approx 2^{n H_2(p)}
+    \]
+    \begin{proof}
+        \[
+        \binom{n}{np,n(1-p)} = \frac{n!}{(np)!(n(1-p))!}
+        \]
+        Then take logarithm, we have \[
+        \ln \binom{n}{np,n(1-p)} = \ln n!-\ln (np!-\ln (n(1-p))!
+        \]
+        This quentity is approximately $n \H_e(\{p,1-p\})$ by Sterling's approximation. Lastly, change the base to $2$.
+    \end{proof}
+\end{bbox}
+
+\section{Conditional Strong AEP}
+\begin{bbox}{Conditional Strong AEP}
+For any $\vec x \in T$, define \[
+T^n_{Y|X_\delta}(\vec x) = \{\vec y\in T^n_{Y}:(\vec x, \vec y)\in T^n_{XY}
+\]
+If $|T_{Y|X}|>1$, then \[
+2^{n(H(Y|X)-\nu)} \leq |T^n_{Y|X}(\vec x)| \leq 2^{n(H(Y|X)+\nu)}
+\]
+where $\nu\to 0$ as $n\to \infty$ and $\delta\to 0$
+\end{bbox}
+Note that since \[
+\frac{|T_{Y|X}|}{|T_X|}\approx \frac{2^{nH(X,Y)}}{2^{nH(X)}} = 2^{n(H(X,Y)-H(X))}=2^{nH(Y|X)}
+\], so the number of $\vec y$ that are jointly typical with a typical $\vec x$ is approximately equal to $2^{nH(Y|X)}$
+
+\begin{bbox}{Upper bound of conditional SAEP}
+   If $|T^n_{Y|X_\delta}(\vec x)|\geq 1$, then \[
+   |T^n_{Y|X_\delta}(\vec x)\leq 2^{n(H(Y|X)+\nu)}|
+   \] where $\nu\to 0$ as $n\to \infty$ and $\delta\to 0$.
+   \begin{proof}
+       For any $\nu >0$, consider \begin{align*}
+          2^{-n(H(X)-\nu/2)}&\geq p(\vec x) \quad \text{by typicality of $\vec x$}\\
+          &=\sum_y p(x,y)\\
+          &\geq \sum_{y\in T^n_{Y|X}}p(x,y)
+           \\
+          &\geq \sum_{y\in T_{Y|X}} 2^{-n(H(X,Y)+\nu/2)} \quad\text{by joint typicality}\\
+          &=|T^n_{Y|X}| 2^{-n(H(X,Y)+\nu/2)}
+       \end{align*}
+   \end{proof}
+\end{bbox}
+The proof of the lower bound is more complicated.
+\begin{pbox}{Lower Bound}
+    Consider $\X=\{0,1\}$, $\{\Y=\{a,b,c\}$.
+    There are probably $n p(0,a)$ occurrences of the pair $(0,a)$, etc. If we rearrange the components of $\vec y$, corresponding to $x_k=0$, then joint typicality is preserved. Then we can compute the number of arrangements. Then use the binomial coefficient approximation. As long as there's a typical $\vec y$, we can get a approx $2^{nH(Y|X)}$.
+\end{pbox}
+\begin{bbox}{6.12 Corollary}
+    Let $S_X$ be the set of all sequences $\vec x\in T_X$ such that $T^n_{Y|X}$ is nonempty. Then \[
+    |S_X|\geq (1-\delta)2^{n(H(X)-\psi)},
+    \] where $\psi\to 0$ as $n\to \infty$ and $\delta\to 0$.
+    This says $S_X$ and $T_X$ grows at the same asymptotic rate.
+    \begin{proof}
+        By consistentcy of strong typicality, if $(\vec x,\vec y)$ is jointly typical, $\vec x$ and $\vec y$ are marginally typical. Then \[T^n_{XY}=\bigcup_{\vec x\in S_X}\{(\vec x,\vec y):\vec y\in T^n_{Y|X}\}
+        \]
+        Using the lower bound on $|T^n_{XY}|$ in strong JAEP and upper bound on $T^n_{Y|X}$, we get the desired inequality, where $\psi$ is $\lambda + \delta$
+    \end{proof}
+    \begin{proposition*}
+        With respect to a joint distribution $p(x,y)$, for any $\delta>0$,\[
+        Pr\{\vec X\in S^{n}_X\} > 1-\delta
+        \] for $n$ sufficiently large.
+        \newline
+        This says with high probability, we can obtain sequence such that there exists a $\vec y$ that is jointly typical with it. \end{proposition*}
+\end{bbox}
+
+Joint typicality has an "asymptotic quasi-uniform" structure. We can draw an array to visualize. The rows are $2^{nH(X)}$ typical $x$ sequences. The columns are $2^{nH(Y)}$ typical $y$ sequences. The total number of points in this array where $\vec x$ and $\vec y$ are jointly typical are $2^{nH(X,Y)}$. If we fix a typical $x$ sequence, the number of dots in that row is $2^{nH(Y|X)}$ dots. (every row in a strongly typical array has approx the same number of dots).
+\centering{\textbf{Interpretation of the basic inequalities}}
+Since the number of dots is less than or equal to the number of cells, we have that \[
+2^{nH(X,Y)}\leq 2^{nH(X)}2^{nH(Y)}
+\]
+or $H(X,Y)\leq H(X)+H(Y)$\\
+or \[
+I(X,Y)\geq 0.
+\]
+The quasi-uniform array provides a combinatorial interpretation of information inequalities.
+\end{document}

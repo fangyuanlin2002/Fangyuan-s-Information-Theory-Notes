@@ -1,0 +1,54 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 10}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+
+\subsection*{8.4 Product Source}
+Let $X$ and $Y$ be two independent source random variables with reproduction alphabets $\hat \X$ and $\hat \Y$ and distortion measures $d_x$ and $d_y$, and the rate-distortion function for $X$ and $Y$ are denoted $R_x(D_x)$ and $R_y(D_y)$. Define the distortion measure on the product source $(X,Y)$ by \[
+    d:\X\times\Y \to \hat \X\times
+\]
+\[
+ d((x,y), (\hat x,\hat y)) = d_x(x,\hat x) + d_y(y,\hat y). 
+\] Prove that the rate-distortion function $R(D)$ for $(X,Y)$ with distortion measure $d$ is given by \[
+R(D) = \min_{D_x+D_y=D}(R_x(D_x) + R_y(D_y)).
+\]
+Hint: Prove that $I(X,Y;\hat X,\hat Y)\geq I(X;\hat X) + I(Y;\hat Y)$ if $X$ and $Y$ are independent (by Shannon.)
+\begin{proof}
+Follwoing the hint,
+    \begin{align*}
+        I(X,Y; \hat X, \hat Y) &= H(X,Y)-H(X,Y|\hat X,\hat Y)\\
+        &= H(X)+H(Y) - H(X|\hat X,\hat Y) - H(Y|\hat X, \hat Y) \quad \text{by independence}\\
+        &\geq H(X)+H(Y)-H(X|\hat X)-H(Y|\hat Y)\\
+        &= I(X;\hat X) + I(Y;\hat Y)
+    \end{align*}
+    Now consider \begin{align*}
+        R(D) &= \min_{(\hat X,\hat Y): \bE d((X,Y),(\hat X,\hat Y))=D}I(X,Y;\hat X,\hat Y) \quad \text{by definition of $R(D)$}\\
+        &= \min_{(\hat X,\hat Y): \bE d_x(X,\hat X) + \bE d_y(Y,\hat Y)=D}I(X,Y;\hat X,\hat Y) \quad \text{by definition of $d$ and linearity of $\bE$}\\
+        &\geq \min_{(\hat X,\hat Y): \bE d_x(X,\hat X) + \bE d_y(Y,\hat Y)=D}I(X;\hat X) + I(Y;\hat Y) \quad \text{by definition of $d$ and linearity of $\bE$}\\
+        &\geq \min_{(\hat X,\hat Y): \bE d_x(X,\hat X) + \bE d_y(Y,\hat Y)=D}R_x(\bE d_x(X,\hat X)) + R_y(\bE d_y(Y,\hat Y)) \quad \text{by definition of $d$ and linearity of $\bE$}
+    \end{align*}
+    Then through a change of notation, \[
+    R(D)\leq \min_{D_x+D_y=D}(R_x(D_x)+R_y(D_y))
+    \]
+    Let the minimization problem be achieved by $(\hat X^*,\hat Y^*)$. $R(D)$ is achieved by letting $\hat X$ be $\hat X^*$ and $\hat Y$ be $\hat Y^*$: let the joint distribution be such that the above inequalities become tight.
+\end{proof}
+\subsection*{8.6 Separation Theorem with distortion}
+Show that asymptotic optimality can be achieved by separating rate-distortion coding and channelcoding when the information source is i.i.d. (with a single-letter distortion measure) and the channel is memoryless.
+\begin{proof}
+    Suppose \[
+    \bE d(\vec X, \vec{\hat X})\leq D+\epsilon
+    \]
+    Then \begin{align*}
+        nC&\geq I(\vec X,\vec{\hat X}) \\
+        &\geq nR(\bE d(\vec X,\vec{\hat X}))\\
+        &\geq nR(D+\epsilon)
+    \end{align*}
+    By letting $\epsilon\to 0$, we have $C\geq R(D)$.
+\end{proof}
+
+\subsection*{9.3 Choice of initial input distribution in BA}
+Explain why in the BA algorithm for computing channel capacity, we should not choose an initial input distribution which contains zero probability masses.
+\begin{proof}
+    Suppose $r^{(0)}\leq 0$ and $r^{(0)}(x)=0$, then by our formula for computing the optimal $q$ given $r$, $q^{(0)}$ would be zero. Then $r^{(1)}(x)=0$. If the optimal input distribution is strictly positive, then the algorithm won't converge to the true solution.
+\end{proof}
+\end{document}

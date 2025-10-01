@@ -1,0 +1,331 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section{Continuous-Valued Channels}
+\begin{itemize}
+    \item In a communication system, the input and output of a channel not always take discrete values and transmittion is not always in discrete time.
+    \item For example, a waveform channel.
+\end{itemize}
+\section{Discrete-Time Continuous-Valued Channel}
+We first consider discrete-time continuous-valued channel. Here is a very natural definition.
+\begin{gbox}{discrete-time Continuous Channel I}
+    Let $f(y|x)$ be a conditional pdf defined for all $x$, where \[
+    h(Y|X=x)=-\int_{S_Y(x)}f(y|x)\log f(y|x)\dd y < \infty
+    \] for all $x$. A discrete-time continuous channel $f(y|x)$ is a system where input random variable $X$ and the output random variable $Y$ are related through $f(y|x)$.
+\end{gbox}
+Like before, we will a definition of the channel using noise instead of transition probabilities.
+\begin{gbox}{Continuous Channel II}
+    et $\alpha:\bR\times \bR\to \bR$ and $Z$ be a real random variable, called the noise variable. A (discrete-time) continuous channel $(\alpha,Z)$ is a system with a real input and a real output. For any input random variable $X$, the noise random variable $Z$ is independent of $X$, and the output random variable $Y$ is given by \[
+    Y=\alpha(X,Z)
+    \] i.e. you know what the output is given the input and the noise.
+\end{gbox}
+\begin{gbox}{Equivalence of the two channels}
+    Two continuous channels $f(y|x)$ and $(\alpha,Z)$ are equivalent if for every input distribution $F(x)$, \[
+    \Pr\{X\leq x,\alpha(X,Z)\leq y\} = \int_{-\infty}^x\int_{-\infty}^y f_{Y|X}(v|u)\dd v\dd F_X(u) = F_{XY}(X\leq x, Y\leq y)
+    \] = for all $x$ and $y$.
+\end{gbox}
+\begin{itemize}
+    \item The second definition is more general than the first definition because it does not require the existence of $f(y|x)$. 
+    \item In this section we assume $f(y|x)$ exists and will use the first definition.
+\end{itemize}
+\begin{gbox}{Continuous Memoryless Channel I}
+    A continuous memoryless channel (CMC) $f(y|x)$ is a sequence of replicates of a generic continuous channel $f(y|x)$. These continuous channels are indexed by a discrete-time index $i$. Transmission through a channel is assumed to be instantaneous. Let $X_i$ nad $Y_i$ be the input and the ouput of the CMC at time $i$, and let $T_{i-}$ denote all the random variables that are generated in the system before the $i$th input $X_i$. \[
+    T_{i-}\to X_i\to Y_i
+    \] is a Markov chain, and \[
+    \Pr\{X_i\leq x, Y_i\leq y\}= \int_{-\infty}^x\int_{-\infty}^y f_{Y|X}(v|u)\dd v\dd F_{X_i}(u).
+    \]
+    \begin{remark}
+        I think it's just a bunch of independent copies of a channel.
+    \end{remark}
+\end{gbox}
+\begin{gbox}{CMC II}
+    A continuous memoryless channel $(\alpha,Z)$ is a sequence of replicates of a generic continuous channel $(\alpha,Z)$. These continuous channels are indexed by a discrete-time index $i$. Transmission through a channel is assumed to be instantaneous. Let $X_i$ nad $Y_i$ be the input and the ouput of the CMC at time $i$, and let $T_{i-}$ denote all the random variables that are generated in the system before the $i$th input $X_i$. \textit{The noise variable $Z_i$ for the transmission at time $i$ is a copy of the generic noise variable $Z$ and is independent of $(X_i, T_{i-})$}. The output of the CMC at time $i$ is given by \[
+    Y+i = \alpha(X_i,Z_i)
+    \]
+\end{gbox}
+\begin{gbox}{Average input constraint}
+    Let $\kappa$ be a real function. An average input constraint $(\kappa, P)$ for CMC is the requirement that for any codeword $(x_1,x_2,\dots,x_n)$ transmitted over the channel, \[
+    \frac{1}{n}\sum_{i=1}^n \kappa(x_i) \leq P
+    \]
+    \begin{enumerate}
+        \item For a fixed value of $x$, we think of $\kappa(x)$ as the cost of transmitting $x$.
+        \item For example, if $\kappa(x)=x^2$, then $\kappa(x)$ is the energy and $P$ is the power.
+    \end{enumerate}
+\end{gbox}
+\begin{gbox}{Channel Capacity}
+    The capacity of a continuous memoryless channel $f(y|x)$ with input constraint $(\kappa, P)$ is defined as \[
+    C(P) = \sup_{F(x): \bE\kappa(X)\leq P} I(X;Y)
+    \]
+\end{gbox}
+\begin{bbox}{Property of Channel Capacity}
+    $C(P)$ is \begin{enumerate}
+        \item non-decreasing
+        \item concave: \[
+        C(\lambda P_1 + (1-\lambda)P_2)\geq \lambda C(P_1) + (1-\lambda)C(P_2)
+        \]
+        \item left-continuous
+    \end{enumerate}
+    \begin{proof}
+        \begin{enumerate}
+            \item immediate
+            \item consequence of the concavity of mutual information with respect to the input distribution.
+            \begin{enumerate}
+                \item Let $j=1,2$. For any $P_j$, for all $\epsilon>0$, by the definition of $C(P_j)$, there exists distribution $F_j(x)$ such that \[
+                \bE \kappa(X_j) \leq P_j
+                \] and \[
+                I(X_j;Y_j)\leq C(P_j) - \epsilon
+                \]
+                \item Define $X^{\lambda}\sim\lambda F_1(x) + (1-\lambda) F_2(x)$.
+                \item The $\bE \kappa(X^\lambda) \leq \lambda P_1 + (1-\lambda)P_2$.
+                \item Also by the the concavity of mutual information iwth respect to the input distribution, we have \[
+                I(X^\lambda, Y^\lambda)\leq \lambda I(X_1;Y_1) + (1-\lambda) I(X_2;Y_2) \geq \lambda C(P_1) + (1-\lambda)C(P_2)-\epsilon
+                \]
+                \item Then \[
+                C(\lambda P_1 +\Bar{\lambda}P_2) \geq I(X^\lambda, Y^\lambda)\geq \lambda C(P_1) + \Bar{\lambda}C(P_2)-\epsilon
+                \] for all $\epsilon>0$.
+            \end{enumerate}
+            \item left-continuous: consequence of concavity.\begin{enumerate}
+                \item Let $P_1 < P_2$, so that $P_2\geq \lambda P_1 + (1-\lambda) P_2$. Since $C(P)$ is non-decreasing, we have \[
+                C(P_2)\geq \lambda C(P_1)+\Bar{\lambda}C(P_2)
+                \]
+                \item Let $\lambda\to 0$, we have \[
+                C(P_2)\geq \lim_{\lambda\to 0}C(\lambda P_1+\Bar{\lambda}P_2) \geq C(P_2)
+                \]
+                \item This implies \[
+                \lim_{\lambda\to 0} C(\lambda P_1+\Bar{\lambda}P)2) = C(P_2)
+                \]
+            \end{enumerate}
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\section{The Channel Coding Theorem}
+\begin{gbox}{Encoding function}
+    An $(n,M)$ code for a continuous memeoryless channel with input constraint $(\kappa, P)$ is defined by an encoding function \[
+    e:\{1,2,\dots,M\}\to \bR^n
+    \] and a decoding function \[
+    g:\bR^n \to \{1,2,\dots, M\}
+    \]
+    \begin{itemize}
+        \item Message Set: $W=\{1,2,\dots, M\}$
+        \item Codewords: $e(1),e(2),\dots e(M)$, where $e(w)=(x_1(w), x_2(w),\dots, x_n(w))$
+        \item Codebook: the set of all codewords. 
+        \item Also, \[
+        \frac{1}{n}\sum_{i=1}^n\kappa(x_i(\omega))\leq P
+        \] for $1\leq w \leq M$, i.e. each codeword satisfiies the input constraint.
+    \end{itemize}
+\end{gbox}
+\subsection{Assumptions}
+\begin{itemize}
+    \item $W$ is randomly chosen from the set of messages $\W$, so \[
+    H(W)=\log M
+    \]
+    \item input and output of the channel:\[
+    \vec X = (X_1,X_2,\dots,X_n); \vec Y = (Y_1,Y_2,\dotsm Y_n)
+    \]
+    \item $\vec X = e(W)$
+    \item Let $\hat{W} = g(\vec Y)$ be the estimate on the message $W$ by the decoder. 
+\end{itemize}
+\begin{gbox}{Error Probabilites}
+    For all messages $1\leq w \leq M$, let \[
+    \lambda_w = \Pr\{\hat W\neq w|W=w\}=\int_{\vec y:g(y)\neq w}f_{\vec Y|\vec X}(\vec y|e(w))\dd \vec y
+    \] be the conditional probability of error given that the message is $w$.
+    \begin{itemize}
+        \item The maximal probability of error of an $(n,M)$ code is defined as \[
+        \lambda_{max} = \max_w \lambda_w
+        \]
+        \item The average probability of error is defined as \[
+        P_e = \Pr\{\hat W\neq W\}
+        \]
+    \end{itemize}
+\end{gbox}
+\subsection{Statement}
+\begin{gbox}{Achievability of rate}
+    A rate $R$ is (asymptotically) achievable for a continuous memoryless channel if for any $\epsilon>0$, there exists for sufficiently large $n$ an $(n,M)$ code such that if for any $\epsilon > 0$, there exists for sufficiently large $n$ an (n,M) code such that (coding rate good/big enough)\[
+    \frac{1}{n}\log M > R-\epsilon
+    \] and 
+    (error small enough) \[
+    \lambda_{max} < \epsilon.
+    \]
+\end{gbox}
+\begin{bbox}{Channel Coding Theorem}
+    A rate $R$ is achievable for a continuous memoryless channel with input constraint $(\kappa, P)$ if and only if $R\leq C(P)$, the capacity of the channel.
+\end{bbox}
+
+\begin{bbox}{Lemma: Data processing inequality}
+    \[
+    I(W,\hat W) \leq I(\vec X,\vec Y)
+    \]
+    \begin{itemize}
+        \item We first remark that $W\to \vec X\to \vec Y\to \hat W$ forms Markov chain
+        \item $W,\hat W$ are discrete
+        \item $X$ is discrete and $Y$ is continuous. 
+        \item So we have that $\I(W,\hat X)\leq \I(\vec X,\hat W)$ because everything here is discrete.
+        \begin{proof}
+            \begin{align*}
+                \I(W,\hat W) &\leq I(\hat W;\vec X)\\
+                &\leq I(\hat W; X) + I(X;Y|\hat W) \quad\text{by non-negativity of mutual information}\\
+                &= \bE \log\frac{p(\hat W, \vec X)}{p(\hat W)p(\vec X)} + \bE \log\frac{f(\vec Y|\vec X,\hat W)}{f(\vec Y|\hat W)}\\
+                &=\bE \log\frac{p(\hat W, \vec X)f(\vec Y|\vec X,\hat W)}{p(\hat W)p(\vec X)f(\vec Y|\hat W)}\\
+                &=\bE \log\frac{f(\vec Y)p(\vec X,\hat W|\vec Y)}{p(\hat X)f(\vec Y)p(\hat W|\vec Y)}\\
+                &= \bE \log\frac{p(\vec X,\hat W|\vec Y)}{p(\hat X)p(\hat W|\vec Y)}\\
+                &= \bE \log \frac{p(\vec X|\vec Y)p(\hat W|\vec X,\vec Y)}{p(\hat X)p(\hat W|\vec Y)}\\
+                &= \bE \frac{p(\vec X|\vec Y)}{p(\vec X)} + \bE \log \frac{p(\hat W|\vec X,\vec Y)}{p(\hat W|\vec Y)} \\
+                &= \bE \frac{f(\vec Y|\vec X)}{f(\vec Y)} + 0\\
+                &= \I(\vec X;\vec Y)
+            \end{align*}
+        \end{proof}
+    \end{itemize}
+\end{bbox}
+\subsection{Proof of the Converse of the Channel Coding Theorem}
+\begin{enumerate}
+    \item Let $R$ be achievable rate, i.e. for any $\epsilon >0$, for sufficiently large $n$, there exists $(n,M)$ code such that the coding rate is good enough
+    \[
+        \frac{1}{n}\log M > R-\epsilon
+    \] and error is small
+    \[
+    \lambda_{max} < \epsilon.
+    \]
+    \item Consider \begin{align*}
+        \log M &= H(M) \quad \text{because of message is chosen uniformly at random.}\\
+        &= H(W|\hat W) + I(W;\hat W) \quad \text{by the chain rule}\\
+        &\leq H(W|\hat W) + I(\vec X;\vec Y) \quad \text{by the data processing inequality}\\
+        &= H(W|\hat W) + h(\vec Y) - h(\vec Y|\vec X)\\
+        &\leq H(W|\hat W) + \sum_{i=1}^n h(Y_i) - h(\vec Y|\vec X) \quad \text{by independence bound}\\
+        &= H(W|\hat W) + \sum_{i=1}^nh(Y_i) - \sum_{i=1}^n h(Y_i|X_i) \quad \text{by Chain rule and Markov property}\\
+        &= H(W|\hat W) + \sum_{i=1}^n \I(X_i;Y_i)
+    \end{align*}
+    \item Let $V$ be a mixing random variable distributed uniformly on $\{1,\dots,n\}$ independent of $X_i$.
+    \item Let $X=X_V$ and Y be the output of the channel with $X$ as the input.
+    \item \begin{align*}
+        \bE \kappa(X) &= \bE \bE[\kappa(X)|V] \quad\text{by towering property}\\
+        &=\sum_{i=1}^n \Pr\{V=i\}\bE [\kappa(X)|V=i]\\
+        &=\sum_{i=1}^n \Pr\{V=i\}\bE [\kappa(X_i)|V=i]\\
+        &=\sum_{i=1}^n \Pr\{V=i\}\bE [\kappa(X_i)]\\
+        &=\sum_{i=1}^n \frac{1}{n}\bE [\kappa(X_i)]\\
+        &=\bE \left[\frac{1}{n}\sum_{i=1}^n \kappa(X_i)\right]
+    \end{align*}
+    We assume that each codeword satisfies the input constraint, \[
+    \frac{1}{n}\sum_{i=1}^n\kappa(x_i(w))\leq P \quad \text{for $1\leq w\leq M$}.
+    \]
+    then the randomly chosen codeword $X$, the input, satisfies the input constraint with probability $1$. Therefore the above expectation \[
+    \bE \left[\frac{1}{n}\sum_{i=1}^n \kappa(X_i)\right] \leq P
+    \]
+    \item By the concavity of mutual information with respect to the input distribution,\[
+    \frac{1}{n}\sum_{i=1}^n \I(X_i;Y_i) \leq C(P)
+    \]
+    because \[
+    X\sim \frac{1}{n}\sum_{i=1}^n F_i(x)
+    \]
+    \item Then \[
+    \sum_{i=1}^n \I(X_i;Y_i) \leq nC(P)
+    \]
+    \item Then \[
+    n(R-\epsilon) < \log M \leq H(W|\hat W) + nC(P)
+    \]
+    \item Apply Fano's inequality on $H(W|\hat W) \to 0$ as the upper bound on error probability $\epsilon\to 0$. Then we conclude that \[
+    R\leq C(P).
+    \]
+\end{enumerate}
+\subsection{Proof of the Achievability part of the Channel Coding Theorem}
+\begin{itemize}
+    \item In the definition \[
+    C(P) = \sup_{F(x):\bE_\kappa(X)\leq P}\I(X;Y)
+    \]
+    Since $X$ can be a mixed random variable, so it can be difficult to consider sequences typical w.r.t. the distribution of $X$.
+    \item Now we introduce a new notion of joint typicality: mutual typicality.
+    \item Note that it's difficult to formulate the notion of joint typicality like we did in discrete case because the input distribution $F(x)$ may not have a pdf.
+\end{itemize}
+\begin{gbox}{Mutually typical set}
+    The mutually typical set $\Psi^n_{[XY]_\delta}$ with respect to the joint distribution $F(x,y)$ is the set of pairs of sequences $(\vec x,\vec y)\in \X^n\times\Y^n$ such that the empirical mutual information is close to the true mutual information: \[
+    |\frac{1}{n}\log\frac{f(\vec y|\vec x)}{f(\vec y)}-I(X;Y)|\leq \delta,
+    \] where \[
+    f(\vec y|vec x)=\prod^n_{i=1}f(y_i|x_i)\quad \text{and}\quad f(\vec y)=\prod_{i=1}^n f(y_i)
+    \] and $\delta$ is an arbitrarily small positive number. A pair of sequences $(\vec x,\vec y)$ is called mutually $\delta$-typical if it is in $\Psi^n_{[XY]_\delta}$.
+\end{gbox}
+\begin{bbox}{Lemma: sequences are mutually typical in the long run}
+    For any $\delta >0$, for sufficiently large $n$, \[
+    \Pr\{(\vec X,\vec Y)\in \Psi^n_{[XY]_\delta}\}\leq 1-\delta
+    \]
+    \begin{proof}
+        Consider \begin{align*}
+            \frac{1}{n}\log\frac{f(\vec Y|\vec X)}{f(\vec Y)} &= \frac{1}{n}\log\prod_{i=1}^n\frac{f(Y_i|X_i)}{f(Y_i)}\\
+            &=\frac{1}{n}\sum_{i=1}^n\log\frac{f(Y_i|X_i)}{f(Y_i)} \quad\text{which is the sample average}
+        \end{align*}
+        Then by WLLN, \[
+        \frac{1}{n}\sum_{i=1}^n\log\frac{f(Y_i|X_i)}{f(Y_i)} \to \bE \log\frac{f(Y|X)}{f(Y)}=\I(X;Y)
+        \] in measure.
+    \end{proof}
+\end{bbox}
+\begin{bbox}{Lemma}
+    Let $(\vec X',\vec Y')$ be $n$ i.i.d. copies of a pair of generic random variables $(X',Y')$ where $X'$ and $Y'$ are independent (this is a strong assumption) and have the same marginal distributions as $X$ and $Y$, respectively. Then \[
+    \Pr\{(\vec X',\vec Y')\in\Psi^n_{[XY]_\delta}\} \leq 2^{-n(\I(X;Y)-\delta)}
+    \]
+    \begin{proof}
+        \begin{enumerate}
+            \item For any $(\vec x,\vec y)\in \Psi^n_\delta$, by definition \[
+            |\frac{1}{n}\log\frac{f(\vec y|\vec x)}{f(\vec y)} - \I(X;Y)|\leq \delta
+            \]
+            \item Then \[
+            \frac{1}{n}\log\frac{f(\vec y|\vec x)}{f(\vec y)} \leq \I(X;Y)-\delta,
+            \] i.e. \[
+            \frac{f(\vec y|\vec x)}{f(\vec y)}\leq 2^n(I(X;Y)-\delta), 
+            \] i.e. 
+            \[
+            f(\vec y|\vec x)\leq f(\vec y)2^n(I(X;Y)-\delta)
+            \]
+            \item Then \begin{align*}
+                1 &\geq \Pr\{(\vec X,\vec Y)\in \Psi^n_\delta\}\\
+                &= \int\int_{\Psi^n_\delta}f(\vec y|\vec x)\dd F(\vec x)\dd \vec y \\
+                &\geq 2^{n(I(X;Y)-\delta)}\int\int_{\Psi^n_\delta}f(\vec y)\dd F(\vec x)\dd \vec y\\
+                &=2^{n(I(X;Y)-\delta)}\Pr\{(\vec X',\vec Y')\in\Psi^n_\delta\} \quad\text{because the measure of the integral is a product form}
+            \end{align*}
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+\subsubsection{Random Coding Scheme}
+Parameters
+\begin{enumerate}
+    \item Fix $\epsilon>0$ and input distribution $F(x)$. Let $\delta$ be specified later.
+    \item Since $C(P)$ is left-continuous, there exists $\gamma>0$ such that \[
+    C(P-\gamma) > C(P)-\frac{\epsilon}{6}
+    \]
+    \item By the definition of $C(P-\epsilon)$, there exists an input random variable $X$ such that \[
+    \bE \kappa(X)\leq P-\gamma 
+    \] and \[
+    \I(X;Y)\geq C(P-\gamma)-\frac{\epsilon}{6}
+    \]
+    \item Choose for a sufficiently large $n$ an even integer $M$ such that \[
+        \I(X;Y)-\frac{\epsilon}{6} < \frac{1}{n}\log M < I(X;Y) - \frac{\epsilon}{8}
+    \]
+    \item \[
+    \frac{1}{n}\log M > \I(X;Y)-\frac{\epsilon}{6}\leq C(P-\gamma)-\frac{\epsilon}{3} > C(P)-\frac{\epsilon}{2}
+    \]
+\end{enumerate}
+The Random Coding Scheme
+\begin{enumerate}
+    \item Construct the codebook $\C$ of an $(n,M)$ code randomly by generating $M$ codewords in $\bR^n$ independently and identically according to $F(x)^n$.
+    \item Denote the codewords by $\vec{\Tilde{X(1)}},\dots,\vec{\Tilde{X(M)}}$.
+    \item Reveal the codebook $\C$ to both the encoder the decoder
+    \item A message $W$ is chosen from the message set uniformly.
+    \item The sequence $\vec X=\vec{\Tilde{X(W)}}$ is transmitted through the channel.
+    \item The channel outputs a sequence $\vec Y$ according to \[
+    \Pr\{Y_i\leq y_i,i\leq i\leq n|\vec{X(W)}=\vec x\}=\prod_{i=1}^n\int_{-\infty}^{y_i}f(y|x_i)\dd y
+    \]
+    \item The sequence $\vec Y$ is decoded to the message $w$ if \begin{itemize}
+        \item $(\vec{X(w)},\vec Y)\in \Psi^n_\delta$ are mutually typical and
+        \item There does not exist $w'\neq w$ such that $(\vec{X(w')},\vec Y)\in \Psi^n_\delta$
+        \item Otherwise $\vec Y$ is decoded to a garbage constant message.
+    \end{itemize}
+\end{enumerate}
+We now analyze the performance the coding scheme proposed above.
+\begin{itemize}
+    \item Let $vec{\Tilde{X(w)}}$ be the encoded message.
+    \item Define the error event $Err=E_e\cup E_d$, where \[
+    E_e =\{\frac{1}{n}\sum_{i=1}^n\kappa(\Tilde{X_i(W)})>P\}
+    \] and \[
+    E_d =\{\Tilde{W}\neq W\}.
+    \]
+    \item By the union bound $\Pr\{Err\}=\Pr\{Err|W=1\}\leq \Pr\{E_e|W=1\} + \Pr\{E_d|W=1\}$
+    \item By letting $n$ be large enough, we can upper bound the probability of $E_d$ by $\epsilon/4$ by the typicality, similar to the discrete case.
+    \item By WLLN, for sufficiently large $n$, $\Pr\{E_e|W=1\}$ can be upper bounded by $\frac{\epsilon}{4}$
+\end{itemize}
+\end{document}

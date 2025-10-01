@@ -1,0 +1,177 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 8}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+\newline
+Notation: \[
+\vec X:=(X_1,\dots,X_n), \vec x:=(x_1,\dots,x_n)
+\]
+\subsection*{7.1 Dependency Graph of Random Coding Scheme} 
+a) Construct the dependency graph for the random variables involed in the random coding scheme.
+\newline
+Solution"
+The encoded codewords $X_i$ depends on generation of the codebook $X(1), X(2),\dots X(M)$ and $W$. 
+\newline
+Conditioning on $X_1$, the transmitted codeword $Y_1$ is independent of the generated encoding scheme $X(1),\dots, X(M)$ and $W$. 
+\newline
+
+b) By considering the joint distribution of these random variables, prove the markov property
+\newline
+This immediately follows from the dependency graph.
+
+\subsection*{7.2 Capacity of DMC cannot be improved with feedback}
+Show that the capacity of a DMC with complete feedback cannot be increased by using probabilistic encoding and/or decoding schemes.
+
+\begin{proof}
+We showed this argument for deterministic encoding and decoding scheme, i.e. for $X_i$ as a function of $W$ and $\vec Y^{i-1}$. However, the proof for this argument would be the same because:
+$I(W,\vec Y)\leq nC$ still holds because in the step \[
+H(\vec Y) - \sum_{i=1}^n H(Y_i|\vec Y^{i-1}, W) \quad 
+        = H(\vec Y) - \sum_{i=1}^n H(Y_i|\vec Y^{i-1},W,X_i)
+\], we only need to change the equality to $\leq$.
+\end{proof}
+
+\subsection*{7.4 Feedback} 
+Consider a BDC with crossover probability $0<\epsilon<1$ represented by $X_i = Y_i + Z_i\mod 2$, where the $X_i, Y_i, Z_i$ are respectively the input, the output, and the noise variable at time $i$. $X_i$ and $Z_i$ are independent. $Z_i$ are not necessarily iid.\[
+\Pr\{Z_i=0\}=1-\epsilon, \Pr\{Z_i=1\}=\epsilon
+\]
+a) Show that the channel capacity is not increased by feedback
+\begin{proof}
+  \begin{align*}
+      I(W;\vec Y) &= H(\vec Y)-H(\vec Y|W)\\
+      &\leq \sum_{i=1}^nH(Y_i)-H(\vec Y|W)\quad \text{by independence bound}\\
+      &\leq n-H(\vec Y|W)\\
+      &= n - \sum_{i=1}^n H(Y_i|\vec Y^{i-1},W)\quad \text{by the chain rule}\\
+      &\leq n - H(Y_1|W) \quad \text{by taking only the first summand}\\
+      &= n - H(Y_1|W,X_1) \\
+      &= n - H(X_1+Z_1\mod 2|W,X_1)\\
+      &=n-H(Z_1|W,X_1)\\
+      &= n - H(Z_1)\\
+      &= n - h_b(\epsilon)
+  \end{align*}
+  So the channel capacity is limited by the same upper bound as before.
+\end{proof}
+b) Devise a coding scheme without feedback that achieves the channel capacity.
+\begin{proof}
+    For block length $n$, let $C'=\frac{1}{n}I(\vec X, \vec Y)=1-\frac{1}{n}h_b(\epsilon)$ be the channel capacity. By the channel coding theorem, any coding rate coding rate below $C'$ can be achieved by a block code with length $mn$ for sufficiently large $m$.
+\end{proof}
+\subsection*{7.5 Example where $W\to\vec X\to \vec Y\to \hat{W}$ and Lemma 7.16 do not hold}
+Provide an example where WITH FEEDBACK, $W\to\vec X\to \vec Y\to \hat{W}$ and Lemma 7.16 do not hold.
+\begin{proof}
+   Consider a BSC with iid noise $Z_i$ such that the crossover probability is $\epsilon$ (so that $H(Z_i) = h_b(\epsilon)$). Let block length $n=2$. Let $W=(W_1,W_2)$. Let $X_1=W_1$ so that \[
+   Y_1 = X_1 + Z_1\mod 2 = W_1 + Z_1 \mod 2
+   \]
+   Let \[
+   X_2 = W_1 + W_2 + Y_1 \mod 2
+   = W_1 + W_2 +(W_1+Z_1) \mod 2 = W_2 + Z_1 \mod 2
+   \]
+   Then \[
+   Y_2 = X_2 + Z_2 \mod 2= W_2 + Z_1 + Z_2 \mod 2
+   \]
+   Claim: $W, \vec X, \vec Y$ do not form a Markov chain.
+   \begin{align*}
+       &H(Y_1, Y_2|X_1, X_2) \\
+       &= H(Y_1|X_1,X_2) + H(Y_2|X_1,X_2,Y_1)\quad \text{by the chain rule}\\
+       &= H(W_1+Z_1|W_1, W_2+Z_1) + H(W_2+Z_1+Z_2|W_1, W_2+Z_1, W_1+Z_1)\\
+       &=H(Z_1) + H(Z_2)\\
+       &= 2h_b(\epsilon)
+   \end{align*}
+   \begin{align*}
+       &H(\vec Y|\vec X,W)\\
+       &=H_b(\epsilon)
+   \end{align*}
+   Claim: $I(\vec X; \vec Y) > I(X_1;Y_1) + I(X_2; Y_2)$
+   \begin{align*}
+       I(\vec X; \vec Y) &= I(X_1,X_2;Y_1,Y-2)\\
+       &=I(W_1,Z_1;W_1+Z_1, W_2+ Z_1+Z_2)\\
+       &= 1 + (Z_1; Z_1+Z_2)
+   \end{align*}
+   \begin{align*}
+       &\I(X_1;Y_1) + I(X_2;Y_2)\\
+       &= I(W_1; W_1+Z_1) + I(W_2+Z_1; Z_1+Z_2)\\
+       &= H(W_1)-H(W_1|W_1+Z_1) + I(Z_1;Z_1+Z_2)\\
+       &=1-h_b(\epsilon)+I(Z_1;Z_1+Z_2)   
+   \end{align*}
+\end{proof}
+
+\subsection*{7.6 Feedback provides no information for DMC} 
+Prove that when a DMC is used with complete feedback, \[
+\Pr\{Y_i=y_i|\vec X^i=\vec x^i, \vec Y^{i-1}=\vec y^{i-1}\}=\Pr\{Y_i=y_i|X_i=x_i\}
+\] for all $i\geq 1$. This relation, which is a consequence of the causality of the code, says that given the current input, the current output does not dependent on all the past inputs and outputs of the DMC.
+\begin{proof}
+   We know that \[
+   I(W,\vec X^{i-1}, \vec Y^{i-1}; Y_i|X_i)=0 \quad \text{Memoryless property}
+   \]
+ Consider \[
+ I(W,\vec X^{i-1}, \vec Y^{i-1}; Y_i|X_i) = I(\vec X^{i-1}, \vec Y^{i-1};Y_i|X_i) + I(W;Y_i|X_i,\vec X^{i-1},\vec Y^{i-1}) \quad \text{by the chain rule}
+ \]
+ Therefore, $I(\vec X^{i-1}, \vec Y^{i-1};Y_i|X_i)=0$ by non-negativity of conditional mutual information.
+\end{proof}
+
+\subsection*{7.12 Feedback increases capacity}
+Consider a ternary channel with memory with input/output alphabet $\{0,1,2\}$ as follows. At time $1$, the output of the channel $Y_1$ has a uniform distribution on $\{0,1,2\}$ and is independent of the input $X_1$ (i.e., the channel outputs each of the values $0,1,$ and $2$ with probability $\frac{1}{3}$ regardless of the input). At time $2$, the transition from $X_2$ to $Y_2$ which depends on the value of $Y_1$ is depicted below:
+\newline
+\begin{tikzpicture}[auto, node distance=2cm,]
+    % First set of transitions for Y_1=0
+    \node at (-1,2) {$Y_1=0$};
+    \node (a0) at (-1,1) {0};
+    \node (a1) at (-1,0) {1};
+    \node (a2) at (-1,-1) {2};
+    \node (b0) at (1,1) {0};
+    \node (b1) at (1,0) {1};
+    \node (b2) at (1,-1) {2};
+    
+    \draw[->] (a0) -- (b0);
+    \draw[->] (a1) -- (b1);
+    \draw[->] (a2) -- (b1);
+    
+    % Second set of transitions for Y_1=1
+    \node at (5,2) {$Y_1=1$};
+    \node (c0) at (4,1) {0};
+    \node (c1) at (4,0) {1};
+    \node (c2) at (4,-1) {2};
+    \node (d0) at (6,1) {0};
+    \node (d1) at (6,0) {1};
+    \node (d2) at (6,-1) {2};
+    
+    \draw[->] (c0) -- (d2);
+    \draw[->] (c1) -- (d1);
+    \draw[->] (c2) -- (d2);
+    
+    % Third set of transitions for Y_1=2
+    \node at (10,2) {$Y_1=2$};
+    \node (e0) at (8,1) {0};
+    \node (e1) at (8,0) {1};
+    \node (e2) at (8,-1) {2};
+    \node (f0) at (10,1) {0};
+    \node (f1) at (10,0) {1};
+    \node (f2) at (10,-1) {2};
+    
+    \draw[->] (e0) -- (f0);
+    \draw[->] (e1) -- (f0);
+    \draw[->] (e2) -- (f2);
+
+\end{tikzpicture}
+\newline 
+For every two subsequent transmissions, the channel replicates itself independently. So we only need to consider the first 2 transitions. In the sequel, we regard this channel as described by a generic discrete channel (with transmission duration of $2$) with two input symbols $X_1$ and $X_2$ and two output symbols $Y_1$ and $Y_2$
+ and we will refer to this channel as the block channel.
+a) Determine the capacity of this block channel when it is used without feedback. Hint: use the results in problem 8 and 11.
+\begin{proof}
+    With probability $\frac{1}{3}$, the channel has capacity $\log 3$ buts/use. With probability $\frac{2}{3}$, the channel has capacity $\log 3 -1$. Thefore, the cahnnel capacity is $\frac{1}{2}\log 3 -\frac{1}{3}$.
+\end{proof}
+b) Consider the following coding scheme when the block channel is used with feedback. Let the message $W=(W_1,W_2)$ with $\mathcal{W}_1=\{0,1,2\}$ and $\mathcal{W}_2=\{0,1\}$. Let $W_1$ and $W_2$ be independent, and each of them is distributed uniformly on its alphabet. Firs, let $X_1=W_1$ and transmit $X_1$ through the channel to obtain $Y_1$, which is independent of $X_1$. Then based on the value of $Y_1$, we determine $X_2$ as follows: 
+\begin{itemize}
+    \item If $Y_1=0$, let $X_2=0$ if $W_2=0$ and let $X_1=1$ if $W_2=1$
+    \item If $Y_1=1$, let $X_2=1$ if $W_2=0$, and let $X_2=2$ if $W_2=1$.
+    \item If $Y_1=2$, let $X_2=0$ if $W_2=0$ and let $X_2=2$ if $W_2=1$.
+\end{itemize}
+Then transmit $X_2$ through the cahnnel to obtain $Y_2$. Based on this coding scheme, show that for the capacity of this block channel can be increased by feedback.
+\begin{proof}
+    \begin{align*}
+        I(W;Y_1,Y_2) &= H(W) + H(Y_1,Y_2)-H(W,Y_1,Y_2)\\
+        &= \log 6 + \log 6 - \log 18\\
+        &= 1
+    \end{align*}
+    The capcity of this channel is lower bounded by $\frac{1}{2}$.
+\end{proof}
+
+\end{document}

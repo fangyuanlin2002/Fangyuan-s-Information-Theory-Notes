@@ -1,0 +1,168 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+Before we get started, here are some life advice:
+\begin{itemize}
+    \item No reading, no learning
+    \item No writing, no reading
+    \item No data, no truth
+    \item No analytic, no understanding
+    \item No programming, no cognition.
+\end{itemize}
+The course is divided into 7 sections: \begin{enumerate}
+    \item Preliminary: \begin{itemize}
+        \item Concept of signal
+        \item Time domain $\leftrightarrow$ frequency domain
+    \end{itemize}
+    \item How to obtain digital signal: sampling, A/D and D/A
+    \item How to process digital signals: Z-transformation, Fourier Transformation (two fundamental tools). Digital filters (processing technique) which are linear time-invariant systems.
+    \item How to improve performance: speed (FFT 10 most important algorithms of 20th century), Quantization Noise and finite word length.
+    \begin{remark}
+        We cannot eliminate noise, but we can control it. When a person is over 18 years ago, it's almost impossible for them to get rid of their bad habits
+    \end{remark}
+    \item How to design digital filters (modeling)
+\end{enumerate}
+
+\chapter{Digital Signal}
+A signal is a function, usually a function of time. A digital signal is discrete-time and this is the topic of today. 
+
+The first case we consider is even subdivision of the time interval: Let $X(t)$ be a continuous-time signal, fix $T\in \bR$, we consider $\{X(KT)\}_{-\infty}^\infty$. We subdivide the graph of the signal into columns and each column is known as the $\delta$ function.
+\begin{pbox}{$\delta$ signal/Dirac Function/impulse}
+    \[
+    \delta(k) = \begin{cases}
+        1 \quad k = 0 \\
+        0 \quad k\neq 0
+    \end{cases}
+    \]
+\end{pbox}
+The representation of the digital signal $X(n)$ is then \[
+X(n)= \sum_{k=-\infty}^{+\infty} \delta(n-k) X(k)
+\]
+\subsection{Period}
+
+Suppose $X(n)=\exp(j\frac{2n\pi}{N})$, then we observe that $x(n)=x(n+N)$ where $N$ is the period. ($j$ represents $\sqrt{-1}$).
+
+Now suppose $X(n)=\exp(jn)$, then this function is not periodic! The continuous signal has a period of $2\pi$ and it is not a multiple of any integer since it's irrational.
+
+Note that this phenomenon is due to the discreteness of our signal.
+
+\subsection{Concept of Processing}
+The processing operation is also a function. People use function/system interchangeably.
+
+The processed signal, or the output, is denoted by $y(n)$ and the processing function by $L$. Then \[
+y(n) = L(x(n))
+\]
+\begin{itemize}
+    \item Observe that system above is memoryless. Some other systems are not memoryless.
+    \item Through a substitution of variable, we obtain that \[
+    y(n) = L(\sum_{k=-\infty}^\infty X(k) \delta(n-k))
+    \]
+    \item We advance our study through \textit{assumptions}. Our cognition is based on assumption. Philosophically, there is no truth. It is just so obvious that we are gonna assume \textbf{linearity}: \[
+    L(\alpha_1 X_1(n) + \alpha_2 X_2(n)) = \alpha_1 L(X_1(n)) + \alpha_2 L(X_2(n)).
+    \]
+    \item Then \[
+    L(\sum_{k=-\infty}^\infty X(k) \alpha_k = \sum_{k=-\infty}^\infty \alpha_k L(X_k(n)).
+    \]
+    \item Professor Zhang: there is no real linearity. There is only theoretical linearity.
+\end{itemize}
+Now we apply the linearity assumption to $y(n)$: \begin{align}
+    y(n) &= \sum_{k=-\infty}^\infty X(k) L(\delta(n-k)) \label{separation}
+\end{align}
+In \ref{separation}, we have done a separation in the sense that the input is $X(n)$, however, the processing system/function is applied to $\delta$'s. The processing isn't even applied to the signal $X$! This is due to our assumption of linearity. If $y(n)=(x(n))^2$, then things get very complicated. The processing is applied to the basis vectors (which exist independent of $X$ and we consider them as part of the system), independent of the signal $X$ itself.
+
+Professor Zhang: a good assumption has 3 characters: 1, simple statement, 2, fast advancement. 3, Widely applicable.
+
+Another assumption of our interest is \textbf{time invariant}: \[
+L(x(n))=y(n) \implies L(x(n-n_0)) = y(n-n_0)
+\]
+This assumption means that the system does not change with respect to time. The time of arrival of the input does not matter.
+
+Now we go back to $y(n) = \sum_{k=-\infty}^\infty X(k) L(\delta(n-k))$. Denote $L((\delta(n)))=h(n)$, called \textit{Unit Impulse Response}, then by time-invariance, $L(\delta(n-k))=h(n-k)$. Finally, \[
+y(n) = \sum_{k=-\infty}^\infty x(k) h(n-k),
+\]
+which is also known as \textbf{convolution}, denoted as $x(n)* h(n)$.
+\begin{bbox}{Convolution is Commutative}
+We apply a change of variable in the summation:
+\begin{align*}
+    &x(n) * h(n)\\
+    &=\sum_{k=-\infty}^\infty X(k)h(n-k) \\
+    &=\sum_{k=-\infty}^\infty X(n-k')h(k')\\
+    &= h(n) * x(n)
+\end{align*}
+\end{bbox}
+\begin{bbox}{Convolution is also distributive}
+    \[
+    x(n) * (y(n)+z(n))=x(n)*y(n)+x(n)*z(n)
+    \]
+\end{bbox}
+
+Now if we consider the casual relation, $y(n)\sim \{x(n), x(n-1),x(n-2),\dots \}$, then the summation stops at $n$, meaning \[
+y(n) = \sum_{k=-\infty}^n x(k) h(n-k)
+\]
+which implies that $h$ is zero for $k > n$. 
+Sufficiency:  $h(k)=0 \quad k < 0\implies$ casual relation. This is straightforward.\\
+Necessity: Consider $y(n)=\sum_{k=-\infty}^\infty h(k)x(n-k)$. 
+Split the summation into: \[
+\sum_{k=-\infty}^{-1} h(k)x(n-k) + \sum_{k=0}^\infty h(k)x(n-k)
+\]
+Suppose by contradiction that $h(k_1) \neq 0$ for some $k_1 < 0$. Then let $X(n-k_1)\neq 0$ and let $X$ be zero at all other point. Since $n-k_1 >n$, contradicting our assumption on causality.
+\vspace{10mm}
+\newline
+Next, we will introduce another assumption: \textbf{stability}.
+Stability means finite input implies finite output, i.e. $|x(n)|\leq M_x\in \bR$ for all $n$, then $|y(n)|\leq M_y$ for all $n$.
+
+Consider $y(n)=\sum_{k=-\infty}^\infty h(k)x(n-k)$. Then \begin{align*}
+    |y(n)| &= |\sum_{k=-\infty}^\infty h(k)x(n-k)|\\
+    &\leq \sum_{k=-\infty}^\infty |h(k)| |x(n-k)|\\
+    &\leq M_x \sum_{k=-\infty}^\infty |h(k)| \quad \text{want to be $\leq M_y$}
+\end{align*}
+For us to be happy, we want to impose assumption on $\sum_{k=-\infty}^\infty |h(k)|$. What assumption? We want it to be bounded. We call the assumed upper bound $M_h$. Then $|y_n|\leq M_x M_h$. 
+
+Now we examine the sufficiency and necessity of the upper bound assumption. Sufficiency is immediate. 
+
+For necessity: assume $\sum_{k=-\infty}^\infty |h(k)|=\infty$. Let's construct $x$ as follows: Let $x(n-k)=\frac{h^*(k)}{|h(k)|}$, then \begin{align*}
+    y(n) &=\sum_{k=-\infty}^\infty h(k)\frac{h^*(k)}{|h(k)|} \\
+    &= \sum_{k=-\infty}^\infty |h(k)| \\
+    &=\infty  
+\end{align*}
+Therefore, this assumption is necessary for stability.
+\vspace{10mm}
+\newline
+Now, consider $y(n)=h(n)x(n)$. Is it linear (with respect to the input)? 
+Well, \begin{align*}
+    &h(n)(\alpha_1 x_1(n) + \alpha_2 x_2(n))\\
+    &=\alpha_1 h(n) x_1(n) + \alpha_2 h(n) x_2(n)
+\end{align*}
+Is it time-invariant? No: because the system changes: in general \[
+\text{(only shift input)}\quad h(n)x(n-n_0) \neq h(n-n_0) x(n-n_0)
+\]
+Causality assumption? $y(n)$ only depends on $x(n)$, not on the future.
+Stability assumption? We have stability under certain condition. We need $|h(n)|\leq C$. We can't have something like exponential growth.
+
+\begin{pbox}{Step Function}
+    The step function is defined as \[
+    U(n) = \begin{cases}
+        1 \quad n\geq 0\\
+        0 \quad n < 0
+    \end{cases}
+    \]
+    Then \[
+    U(n)=\sum_{k-\infty}^{n} \delta(k)
+    \]
+    Notice that \[
+    \delta(n) = U(n) - U(n-1)
+    \]
+    Let \[
+    X(n) = a^n U(n) =\begin{cases}
+        a^n, \quad n\geq 0\\
+        0 \quad n<0
+    \end{cases}
+    \]
+    Let $h(n)=U(n)$
+    \begin{align*}
+        y(n) &= \sum_{k-\infty}^\infty X(k) h(n-k)\\
+        &= \sum_{k-\infty}^\infty a^k U(k) U(n-k)\\
+        &= \sum_{k=0}^n a^k * 1\\
+        &= \frac{a^{n+1} - 1}{a-1}
+    \end{align*}
+\end{pbox}
+\end{document}

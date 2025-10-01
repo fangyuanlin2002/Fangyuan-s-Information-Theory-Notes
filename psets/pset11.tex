@@ -1,0 +1,201 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 11}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+\subsection*{9.4}
+\begin{proof}
+    \begin{align*}
+        &\sum_x\sum_{\hat x} p(x)Q(\hat x|x)\log \frac{Q(\hat x|x)}{t(\hat x)} - \sum_x\sum_{\hat x}p(x)Q(\hat x|x)\log \frac{Q(\hat x|x)}{t^*(\hat x)}\\
+        &= \sum_{\hat x}[\sum_xp(x)Q(\hat x|x)]\log \frac{t^*(\hat x)}{\hat x} \quad \text{by property of $\log$}\\
+        &= \sum_{\hat x}t^*(\hat x)\log \frac{t^*(\hat x)}{t(\hat x)}\quad\text{by def of $t^*$}\\
+        &=D(t^*(\hat x)||t(\hat x))\\
+        &\geq 0 \quad \text{by non-negativity of relative entropy}
+    \end{align*}
+\end{proof}
+\subsection*{9.5}
+Consider $f(Q,t)$ in the BA algorithm for computing the rate-distortion function.\begin{enumerate}[label=\alph*]
+    \item Show that for fixed $s$ and $t$, $f(Q,t)$ is minimized by \[
+    Q(\hat x| x) = \frac{t(\hat x)e^{sd(x,\hat x)}}{\sum_{\hat x'}t(\hat x')e^{sd(\hat x,\hat x')}}
+    \]
+    \begin{proof}
+        Consider the Lagrangian \begin{align*}
+            L &= f(Q,t)-\gamma \sum_{\hat x}Q(\hat x|x)\\
+            &=\sum_x\sum_{\hat x}p(x)Q(\hat x|x)\log\frac{Q(\hat x|x)}{t(\hat x)}-s\sum_x\sum_{\hat x}p(x)Q(\hat x|x)d(x,\hat x)- \gamma\sum_xQ(\hat x|x)
+        \end{align*}
+    Then to solve this optimization problem, the next step is to differentiate $L$ with respect to $Q$. For any $x,\hat x$, \[
+    \frac{\partial L}{\partial Q(\hat x|x)}=p(x)\log\frac{Q(\hat x)|x}{t(\hat x)}-sp(x)d(x,\hat x)-\gamma = 0
+    \]
+    Then we can solve that \[
+    Q(\hat x|x)=e^{\frac{\gamma}{p(x)}}[t(\hat x)e^{sd(x,\hat x)}].
+    \] Normalize this quantity to get \[
+    Q(\hat x| x) = \frac{t(\hat x)e^{sd(x,\hat x)}}{\sum_{\hat x'}t(\hat x')e^{sd(\hat x,\hat x')}}
+    \]
+    \end{proof}
+    \item Show that $f(Q,t)$ is convex
+    \begin{proof}
+        \begin{align*}
+    &f(\lambda Q_1 + \bar{\lambda} Q_2, \lambda t_1 + \bar{\lambda} t_2)\\
+    &= \sum_x \sum_{\hat{x}} p(x) 
+    \left[ 
+        \lambda Q_1(\hat{x}|x) + \bar{\lambda} Q_2(\hat{x}|x)
+    \right] 
+    \log \left( 
+        \frac{\lambda Q_1(\hat{x}|x) + \bar{\lambda} Q_2(\hat{x}|x)}{\lambda t_1(\hat{x}) + \bar{\lambda} t_2(\hat{x})} 
+    \right) \\
+    &\quad - s \sum_x \sum_{\hat{x}} p(x) 
+    \left[ 
+        \lambda Q_1(\hat{x}|x) + \bar{\lambda} Q_2(\hat{x}|x) 
+    \right] 
+    d(x, \hat{x}) \quad \text{by definition}\\
+    &\leq \sum_x \sum_{\hat{x}} p(x) 
+    \left[ 
+        \lambda Q_1(\hat{x}|x) \log 
+        \left( 
+            \frac{\lambda Q_1(\hat{x}|x)}{\lambda t_1(\hat{x})} 
+        \right) 
+        + \bar{\lambda} Q_2(\hat{x}|x) \log 
+        \left( 
+            \frac{\bar{\lambda} Q_2(\hat{x}|x)}{\bar{\lambda} t_2(\hat{x})} 
+        \right) 
+    \right] \\
+    &\quad - s 
+    \left[ 
+        \lambda \sum_x \sum_{\hat{x}} p(x) Q_1(\hat{x}|x) d(x, \hat{x}) 
+        + \bar{\lambda} \sum_x \sum_{\hat{x}} p(x) Q_2(\hat{x}|x) d(x, \hat{x}) 
+    \right] \text{by log-sum}\\
+    &= \lambda 
+    \left[ 
+        \sum_x \sum_{\hat{x}} p(x) Q_1(\hat{x}|x) \log 
+        \left( 
+            \frac{Q_1(\hat{x}|x)}{t_1(\hat{x})} 
+        \right) 
+        - s \sum_x \sum_{\hat{x}} p(x) Q_1(\hat{x}|x) d(x, \hat{x}) 
+    \right] \\
+    &\quad + \bar{\lambda} 
+    \left[ 
+        \sum_x \sum_{\hat{x}} p(x) Q_2(\hat{x}|x) \log 
+        \left( 
+            \frac{Q_2(\hat{x}|x)}{t_2(\hat{x})} 
+        \right) 
+        - s \sum_x \sum_{\hat{x}} p(x) Q_2(\hat{x}|x) d(x, \hat{x}) 
+    \right] \\
+    &= \lambda f(Q_1, t_1) + \bar{\lambda} f(Q_2, t_2).
+\end{align*}
+    \end{proof}
+\end{enumerate}
+
+\subsection*{10.1 Covariance matrix properties}
+\begin{enumerate}
+    \item Prove the covariance matrix is symmetric. 
+    \begin{proof}
+    \begin{align*}
+        K^T &= [\bE (X-\bE X) (X-\bE X)^T]^T \\
+        &= \bE ((X-\bE X)^T)^T(X-\bE X)^T\\
+        &= \bE (X-\bE X)(X-\bE X)^T\\
+        &= K
+    \end{align*}
+    \end{proof}
+    
+    \item Prove that K is positive semidefinite. 
+        \begin{proof}
+            \begin{align*}
+                v^T K v&= v^T [\bE (X-\bE X) (X-\bE X)^T] v\\
+                &=  \bE v^T(X-\bE X) (X-\bE X)^Tv\\
+                &= \bE (v^TX-\bE v^TX)(v^TX - \bE v^TX)^T
+                &= var(v^T X)\\
+                &\geq 0
+            \end{align*}
+        \end{proof}
+    \item Prove that if $\vec X$ and $\vec Z$ are independent, and $\vec Y=\vec X + \vec Z$. Then $K_Y=K_X+K_Z$.
+        \begin{proof}
+            \begin{align*}
+                K_Y &= \bE YY^T - \bE Y \bE Y^T \\
+                &= \bE (X+Z)(X+Z)^T - \bE (X+Z)\bE(X+Z)^T \\
+                &= \bE (XX^T+XZ^T+Z X^T+Z^TZ^T) - (\bE X+\bE Z)(\bE X^T + \bE Z^T)\\
+                &\vdots \quad \text{can split the product because of independence}\\
+                &=K_X+K_Z 
+            \end{align*}
+        \end{proof}
+\end{enumerate}
+\subsection*{10.2 Multivariate Gaussian pdf integrates to one}
+Show that the joint pdf of a multivariate Gaussian distribution integrates to $1$. 
+\begin{proof}
+    Let $X$ be a Gaussian vector with mean $\vec \mu$ and covariance matrix $K$. Let $K=Q\Lambda Q^T$ by applying the Spectral theorem and $Y = Q^T(X-\mu)$. Then \[
+    \bE Y = \bE (Q^T(X-\mu))=Q^T(\bE X-\mu)=0
+    \]
+    and \[
+    K_Y = \Lambda.
+    \]
+    $\vec Y$ is Gaussian vector with zero mean covariance matrix $\Lambda$ and the components of $\vec Y$ are uncorrelated. They are also independent, which is a property of jointly Gaussian RVs. $\vec X$ is a deterministic function of $\vec Y$ so if the pdf of $\vec Y$ integrates to $1$, so does the joint pdf of $X$.
+    \newline 
+    By independence \[
+    f_{\vec Y}(\vec y)=\prod_{i=1}^n \frac{1}{\sqrt{2\pi\lambda_i}}e^{-\frac{y_i^2}{2\lambda_i}}
+    \]
+    Then \begin{align*}
+        \int_{-\infty}^\infty f_{\vec Y}(y)dy &= \int \prod{i=1}^n \frac{1}{\sqrt{2\pi\lambda_i}}e^{-\frac{y_i^2}{2\lambda_i}} dy\\
+        &= \prod_{i=1}^n \int \frac{1}{\sqrt{2\pi\lambda_i}}e^{-\frac{y_i^2}{2\lambda_i}} dy_i\\
+        &=1^n\\
+        &=1
+    \end{align*}
+\end{proof}
+\subsection*{10.3 Covariance matrix of multivariate Gaussian has covariance matrix}
+\begin{proof}
+    By the spectral theorem, $K=Q\Lambda Q^T$. Then \begin{align*}
+        \det K &= \det (Q\Lambda Q^T)\\
+        &= \det Q \det \Lambda \det Q^T&\\
+        &= \det \Lambda\\
+        &= \prod_{i=1}^n \lambda_i\\
+        &>0
+    \end{align*}
+    If any eigenvalue $\lambda_i$ is zero, then the probability density function is not defined for the multivariate Gaussian vector
+\end{proof}
+\subsection*{10.4 Any symmetric positive definite matrix is a covariance matrix}
+\begin{proof}
+    Any symmetric positive definite matrix $K$ specifies a multivariate Gaussian distribution with $K$ and arbitrary mean vector.
+\end{proof}
+\subsection*{10.5 Computational Example}
+Let \[
+K=\begin{bmatrix}
+    7/4 & \sqrt{2}/4 & -3/4\\
+    \sqrt{2}/4 & 5/2 & -\sqrt{2}/4 \\
+    -3/4 & -\sqrt{2}/4 & 7/4
+\end{bmatrix}
+\]
+\begin{enumerate}
+    \item Find the e-vals and e-vec of $K$
+    \begin{proof}
+        Use the characteristic polynomial method. The e-vals are $1,2$ and $3$. The corresponding e-vectors are respectively \[
+        \begin{bmatrix}
+            1/\sqrt{2}\\
+            0\\
+            1/\sqrt{2}
+        \end{bmatrix}, \begin{bmatrix}
+            1/2\\
+            -1/\sqrt{2}\\
+            -1/2
+        \end{bmatrix}, \begin{bmatrix}
+            1/2\\ 1/\sqrt{2} \\ -1/2
+        \end{bmatrix}
+        \]
+    \end{proof}
+    \item Show that $K$ is positive definite. 
+    \begin{proof}
+        This is because every eigenvalue of $K$ is positive.
+    \end{proof}
+    \item Suppose that $K$ is the covariance matrix of a random vector $\vec X=[X_1,X_2,X_3]^T$
+    \begin{itemize}
+        \item Find the coefficient of correlation between $X_i$ and $X_j$ for $1\leq i < j \leq 3$.
+        \begin{proof}
+            \[
+            correlation_{X_i,X_j} = \frac{cov(X_1,X_2)}{\sigma_{X_1},\sigma_{X_2}}.
+            \] Each quantity in the above formula is available in the covariance matrix.
+        \end{proof}
+        \item Find an uncorrelated random vector $Y$ such that $X$ is a linear transformation of $Y$. Also determine its covariance matrix.
+        \begin{proof}
+            \[
+            \vec Y = Q^T\vec X, K_{\vec Y}=\Lambda
+            \]
+        \end{proof}
+    \end{itemize}
+\end{enumerate}
+\end{document}

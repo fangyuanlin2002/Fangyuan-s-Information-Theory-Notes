@@ -1,0 +1,122 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+
+\section*{Problem Set 3}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+\subsection*{2.18 Generalization of independence bound}
+For a subset $\alpha$ of $N_n=\{1,\dots,n\}$, denote $(X_i)_{i\in\alpha}$ by $X_\alpha$. For $k=1,...,n$, let \begin{equation*}
+    H_k=\frac{1}{\binom{n}{k}}\sum_{\alpha:|\alpha|=k}\frac{H(X_\alpha)}{k}
+\end{equation*} where $H_k$ is interpreted as the average entropy per random variable when $k$ random variables are taken from $X_1,..,X_n$ at a time. Prove that $H_1\geq H_2\geq\dots\geq H_n$.\\
+This sequence of inequalities is a generalization of the independence bound for entropy.
+\begin{proof}
+    Consider
+\[
+H(X_\alpha) = H(X_\beta) + H(X_l \mid X_\beta),
+\]
+where \(|\beta| = k - 1\) and \(\alpha = \beta \cup \{l\}\). Summing over all possible \(\beta\):
+\[
+kH(X_\alpha) = \sum_{\substack{\beta \subset \alpha \\ |\beta| = k-1}} H(X_\beta) + \sum_{i \in \alpha} H(X_i \mid X_j, j \in \alpha \setminus \{i\}) \leq \sum_{\substack{\beta \subset \alpha \\ |\beta| = k-1}} H(X_\beta) + H(X_\alpha) \hspace{5mm} \text{by Problem 16 (each to consider information diagram)},
+\]
+Therefore,
+\[
+H(X_\alpha) \leq \frac{1}{k - 1} \sum_{\substack{\beta \subset \alpha \\ |\beta| = k-1}} H(X_\beta).
+\]
+Apply this inequality in the definition of \(H_k\):
+\[
+H_k \leq \frac{1}{\binom{n-1}{k-1}} \sum_{\substack{\alpha \\ |\alpha|=k}} \sum_{\substack{\beta \subset \alpha \\ |\beta|=k-1}} H(X_\beta).
+\]
+Each \(\beta\) is a subset of exactly \((n-k+1)\) \(\alpha\)'s:
+\[
+H_k \leq \frac{1}{\binom{n}{k}\frac{k-1}{n-k+1} }  \sum_{\substack{\beta \\ |\beta|=k-1}} H(X_\beta) 
+\]
+
+\end{proof}
+\subsection*{2.20 Proof of divergence inequality using log-sum inequality}
+
+    \begin{proof}
+        \begin{align*}
+        D(p||q) &=\sum_{x\in S_p}\log\frac{p(x)}{q(x)}\\
+        &\geq (\sum_{x\in S_p}p(x))\log\frac{\sum_{x\in S_p}p(x)}{\sum_{x\in S_p}q(x)}\\
+        &= 1\cdot\log\frac{1}{(\sum_{x\in S_p}q(x)\leq 1)}\\
+        &\geq 0
+        \end{align*}
+    \end{proof}
+\subsection*{3.1 Formula for $I(X;Y;Z)$}
+1. Show that
+\[
+I(X; Y; Z) = \mathbb{E} \left[ \log \frac{p(X, Y)p(Y, Z)p(X, Z)}{p(X)p(Y)p(Z)p(X, Y, Z)} \right]
+\]
+and obtain a general formula for \(I(X_1; X_2; \cdots; X_n)\).
+
+\begin{proof}
+Let \(X^{(n)} = \{X_1, X_2, \cdots, X_n\}\). Define \(\mathcal{Q}_e(n)\) (\(\mathcal{Q}_o(n)\)) to be the set of all subsets of \(X^{(n)}\) consisting of an even (odd) number of random variables. 
+We will prove that for \(n \geq 1\),
+\[
+I(X_1; X_2; \cdots; X_n) = \mathbb{E} \left[ \log \frac{\pi(\mathcal{Q}_e(n))}{\pi(\mathcal{Q}_o(n))} \right], \tag{A3.1}
+\]
+where
+\[
+\pi(\mathcal{Q}_e(n)) = \prod_{Y \in \mathcal{Q}_e(n)} p(Y)
+\]
+and
+\[
+\pi(\mathcal{Q}_o(n)) = \prod_{Y \in \mathcal{Q}_o(n)} p(Y).
+\]
+Use proof by induction:
+Define \( J(\mathcal{Q}_o(n), Z) =\{Y\cup \{Z\}:Y\in Q_e(n)\}  \)\\
+\begin{align*}
+&I(X_1; \cdots; X_n; X_{n+1})\\
+&= \mu^*\left( \bigcap_{X \in X^{(n+1)}} \widetilde{X} \right)\\
+&= \mu^*\left( \left( \bigcap_{X \in X^{(n)}} \widetilde{X} \right) \cap \widetilde{X}_{n+1} \right)\\
+&= \mu^*\left( \bigcap_{X \in X^{(n)}} \widetilde{X} \right) + \mu^*(\widetilde{X}_{n+1}) - \mu^*\left( \left( \bigcap_{X \in X^{(n)}} \widetilde{X} \right) \cup \widetilde{X}_{n+1} \right)\\
+&= \mu^*\left( \bigcap_{X \in X^{(n)}} \widetilde{X} \right) + \mu^*(\widetilde{X}_{n+1}) - \mu^*\left( \bigcap_{X \in X^{(n)}} (\widetilde{X} \cup \widetilde{X}_{n+1}) \right).\\
+&== \mathbb{E} \left[ \log \frac{\pi(\mathcal{Q}_e(n))}{\pi(\mathcal{Q}_o(n))} \right] + \mathbb{E} \left[ \log \frac{1}{p(X_{n+1})} \right] - \mathbb{E} \left[ \log \frac{\pi(J(\mathcal{Q}_e(n), X_{n+1}))}{\pi(J(\mathcal{Q}_o(n), X_{n+1}))} \right]
+\\
+&=\mathbb{E} \left[ \log \frac{\pi(\mathcal{Q}_e(n+1))}{\pi(\mathcal{Q}_o(n+1))} \right]
+\end{align*}
+\end{proof}
+\subsection*{3.2 Independence Question}
+Suppose $X\perp Y$ and $X\perp Z$. Does $X\perp (Y,Z)$ hold in general?
+\begin{proof}
+    No, consider coin tosses $X,Y$ and rv $Z$ checking whether they give different outcomes. $X$ is deterministic given $Y$ and $Z$.
+\end{proof}
+\subsection*{3.3}
+Prove that $I(X;Y;Z)$ vanishes if at least one of the follwoing conditions hold:
+\begin{enumerate}
+    \item $X,Y$ and $Z$ are mutually independent;
+    \item $X\to Y\to Z$ forms a Markov chain and $X$ and $Z$ are indepedent.
+    \end{enumerate}
+ \begin{proof}
+    \begin{enumerate}
+        \item \begin{align*}
+            I(X;Y;Z)=I(X;Y)-I(X;Y|Z)=0-0=0
+        \end{align*}
+        \item If $X\to Y\to Z$
+        \begin{align*}
+        I(X;Y;Z)=I(X;Z) \hspace{5mm}\text{by looking at the information diagram}
+        \end{align*}
+        If $X$ and $Z$ are independent, then $I(X;Z)=I(X;Y;Z)$ vainishes.
+    \end{enumerate}
+    \end{proof}
+\subsection*{3.4 A computational example}
+\begin{enumerate}
+    \item Verify that I(X; Y ;Z) vanishes for the distribution p(x, y, z) given
+by
+p(0, 0, 0) = 0.0625, p(0, 0, 1) = 0.0772, p(0, 1, 0) = 0.0625
+p(0, 1, 1) = 0.0625, p(1, 0, 0) = 0.0625, p(1, 0, 1) = 0.1103
+p(1, 1, 0) = 0.1875, p(1, 1, 1) = 0.375.
+\item Verify that the distribution in part a) does not satisfy the conditions in Problem 3
+
+\end{enumerate}
+\begin{proof}
+    Using inclusion exclusion might be convenient:\begin{align*}
+    I(X;Y;Z)= H(X)+H(Y)+H(Z)-H(X,Y)-H(X,Z)-H(Y,Z)+H(X,Y,Z)=0
+    \end{align*}
+    To verify that $X, Y, Z$ are not mutually independent, check that
+$H(X, Y, Z) \neq H(X) + H(Y ) + H(Z)$.\\
+To verify that $X \to Y \to Z$ is not Markov, check that
+$I(X;Z|Y)=H(X,Y)+H(Y,Z)-H(X,Y,Z)-H(Y)\neq 0$.
+\end{proof}
+
+\end{document}

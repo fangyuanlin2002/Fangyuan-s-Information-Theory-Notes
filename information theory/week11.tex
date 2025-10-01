@@ -1,0 +1,665 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+Last week, we learned how to use BA algorithm to compute channel capacity numerically. Now we compute the rate-distortion function. But to be honest, I cannot wait to get started with differential entropy.
+\section{Algorithm for computing the rate-distortion function}
+The idea is similar to the previous section and I don't have enough interest to go through the technical details again.
+\section{Convergence of the algorithm}
+\subsection{How to prove convergence}
+\begin{itemize}
+    \item Consider the double supremum optimization problem
+    \item First prove that in general that if $f$ is concave, then $f^{(k)}\to f^*$.
+    \item Then apply this sufficient condition to prove the convergence of the BA algorithm for computing the channel capacity.
+\end{itemize}
+Recall that
+\begin{itemize}
+    \item \[
+    \vec u^{(k+1)} = (u_1^{(k+1)}, u_2^{(k+1)})=(c_1(u_2^{(k)}), c_2(c_1(u_2^{(k)})))
+    \]
+    \item Define \[
+    \Delta f(\vec u) = f(c_1(u_2), c_2(c_1(u_2)) - f(u_1,u_2)
+    \]
+    \item Then \[
+    f^{(k+1)}-f^{(k)}=\Delta f(u^{(k)})
+    \]
+\end{itemize}
+\begin{bbox}{{If $f$ is concave, the algorithm doesn't get trapped}}
+    Let $f$ be concave. Then: 
+    \newline
+    If $f^{(k)} < f^*$, then $f^{(k+1)}>f^{(k)}$.
+    \begin{proof}
+        It suffices to prove that $\Delta f(\vec u)>0$ for any $\vec u$ such that $f(\vec u) < f^*$.
+        \begin{enumerate}
+            \item Suppose $\Delta f(\vec u)=0$. We show that convergence has been achieved already. Consider \[
+            f(c_1(u_2), c_2(c_1(u_2)))\geq f(c_1(u_2))\geq f(u_1,u_2)
+            \]
+            If $\Delta f(\vec u)=0$, then the above inequalities are equalities. Due to the uniquess of $c_2(\cdot)$ and $c_1(\cdot)$, equalities above imply that \[
+            u_1=c_1(u_2), u_2=c_2(c_1(u_2))=c_2(u_1)
+            \] meaning the algorithm has converged.
+            \item Second, consider any $\vec u\in A$ such that $f(\vec u) < f^*$. Prove $\Delta f(\vec u)>0$ by contradiction. Suppose by contradiction that $\Delta f(\vec u)=0$. Then $u_1=c_1(u_2)$ and $u_2=c_2(u_1)$, i.e. $u_1,u_2$ maximize $f$ by fixing the other.
+            \newline
+            Since $f(\vec u)<f^*$, there exists $\vec v\in A$ such that $f(\vec u) < f(v).$ Let
+            \begin{itemize}
+                \item $\hat z$ be the unit vector in the direction of $\vec v-\vec u$
+                \item $z_1=(1,0)$, $z_2=(0,1)$
+            \end{itemize}
+            Then $\hat z=\alpha_1 z_1 + \alpha_2 z_2$ where $\alpha_i=\frac{|v_i-u_i|}{\|\vec v-\vec u\|}$.
+            Since $f$ is continuous and has continuous partial derivatives, the directional derivative of $f$ at $\vec u$ in the direction of $z_1$ is given by $\nabla f\cdot z_1$.
+            \newline
+            $f$ attains its maximum at $\vec u$ when $u_2$ is fixed. 
+            \newline
+            Consider the line passing through $(u_1,u_2)$ and $(v_1,u_2)$, $u_1$ is the optimal value along this line so $f$ attains its maximum at $\vec u$ along this line. Therefore, $\nabla f\cdot z_1=0$. Similarly $\nabla f \cdot z_2=0$.
+            \newline
+            Then $\nabla f\cdot \hat z=0$. 
+            \newline
+            Since $f$ is concave, this implies $f(\vec u)\geq f(v)$, a contradiction. Therefore $\Delta f(\vec u)>0$.     
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+Even if the algorithm does not get trapped, the increment can be arbitrarily small. We now show that this is not a problem.
+\begin{bbox}{{Theorem: if f is concave, then the algorithm converges}}
+    If f is concave, then $f^{(k)}\to f^*$
+    \begin{proof}
+        \begin{enumerate}
+            \item First of all, $f^{(k)}$ is necessarily convergent by the monotone-bounded theorem. Denote the limit by $f'$.
+            \item Hence, for any $\epsilon > 0$ and sufficiently large $k$,
+            \[
+            f' - \epsilon \leq f^{(k)}\leq f'
+            \]
+            \item Let \[
+            \gamma = \min_{\vec u\in A'} \Delta f(\vec u)
+            \]
+            where $A'=\{\vec u\in A; f' - \epsilon \leq f^{(k)}(\vec u)\leq f'\}$. $\gamma$ is well defined because:
+            \item $\Delta f(\vec u)$ is continuous because we assumed that $f$ has continuous partial derivatives.
+            \item $A'$ is compact because it is the inverse image of a closed interval under a continuous function and $A$ is bounded. Therefore, $\gamma$ is well defined.
+            \item If $f' < f^*$, since $f$ is concanve, $\Delta f(\vec u)>0$ for all $\vec u\in A'$. Then $\gamma >0$, by the above lemma.
+            \item Therefore, for sufficiently large $k$, $\Delta f(\vec u^{(k)})\geq \gamma$. So the algorithm will converge to the optimum.
+        \end{enumerate}
+    \end{proof}
+\end{bbox}
+To wrap up this section, we need to show that $f$ is concave in the case of computing the channel capacity. We can use the log-sum inequality for the proof.
+
+
+
+\chapter{Differential Entropy}
+So far, we have been talking about discrete random variables and discrete-time information transmission. In this chapter, we will discuss \begin{itemize}
+    \item Real-valued random vectors
+    \item Symmetric, positive definite, and covariance matrices
+    \item Differential entropy and mutual information
+    \item AEP and informational divergence/relative entropy
+    \item Gaussian distribution: usually used to model noise.
+\end{itemize}
+\section{Real random variables}
+Here is a quick review of some (probably too) basic facts.
+\begin{itemize}
+    \item A real r.v. $X$ with cumulative distribution function (CDF) $F_X(x)=\Pr\{X\leq x\}$ is continuous if $F_X(x)$ is continuous. 
+    \item If the CDF increases only at a countable number of $x$, then $X$ would be discrete.
+    \item We say that $X$ is mixed if its CDF is neigher discrete nor continuous. (I think in most probability books, this case is also considered continuous.)
+    \item Support of $X$: \[
+    S_X = \{x\in\bR: F_X(x) > F_X(x-\epsilon)\quad \text{for all $\epsilon > 0$}\}.
+    \]
+    \item \[
+    \bE g(X) := \int_{S_X} g(x) dF_X(x)
+    \] where the RHS is the Lebesgue-Stieltjes integral (where the the CDF (the measure) can be discrete continuous or mixed)
+    \item A nonnegative function $f_X(x)$ is called a probability density function (pdf) of $X$ if \[
+    F_X(x)=\int_{-\infty}^x f_X(u)du
+    \] for all $x.$
+    \item By the fundamental theorem of calculus, \[
+    \frac{d}{dx}F_X(x) = \frac{d}{dx}\int_{-\infty}^xf_X(u)du=f_X(x)
+    \]
+    \item If $X$ has a pdf, then $X$ is continuous, but not vice versa. We can think of $dF_X(x)$ as $f_X(x)dx$ but $dF_X(x)$ is something more general.
+\end{itemize}
+\centering{Jointly Distributed Random Variables}
+\begin{itemize}
+    \item Let $X$ and $Y$ be two real random variables with joint CDF $F_{XY}(x,y)=\Pr\{X\leq x, Y\leq y\}$.
+    \item Marginal CDF of $X$: $F_X(x)=F_{XY}(x,\infty)$
+    \item A non-negative function $f_{XY}(x,y)$ is called a joint pdf of $X$ and $Y$ if \[
+    F_{XY}(x,y)=\int_{-\infty}^x\int_{-\infty}^y f_{XY}(u,v)dydu
+    \]
+    \item Conditional pdf of $Y$ given $\{X=x\}$:\[
+    f_{Y|X}(y|x)=\frac{f_{XY}(x,y)}{f_X(x)}
+    \]
+\end{itemize}
+\centering{Variance and Covariance}
+\begin{itemize}
+    \item Variance of $X$: \[
+    var X = \bE (X-\bE X)^2 = \bE X^2 - (\bE X)^2
+    \]
+    \item Covariance between $X$ and $Y$: \[
+    cov(X,Y) = \bE(X-\bE X)(Y-\bE Y) = \bE(XY) - \bE X\bE Y
+    \]
+    \item \[
+    var(X+Y) = var X + var Y + 2cov(X,Y)
+    \]
+    \item $If X\perp Y$, then $cov(X,Y)=0$ and we say that $X$ and $Y$ are uncorrelated. However, the converse if not true.
+    \item If $X_1,X_2,\dots,X_n$ are mutually independent, then \[
+    var(\sum_{i=1}^nX_i)=\sum_{i=1}^n var X_i
+    \]
+\end{itemize}
+\section{Random Vectors}
+\begin{itemize}
+    \item Let $\vec X=[X_1,\dots,X_n]^T.$
+    \item Covariance matrix: \[
+    K_{\vec X} = \bE(\vec X-\bE \vec X)(\vec X-\bE \vec X)^T = [cov(X_i,X_j)]_{i,j=1}^n
+    \]
+    \item The $i$th diagonal element is $var(X_i)$
+    \item Correlation matrix: \[
+    \Tilde{K}_{\vec X} = \bE \vec X \vec X^T = [\bE X_i X_j]
+    \]
+    \item Relations between $K_{\vec X}$ and $\Tilde{K}_{\vec X}$:\begin{itemize}
+        \item \[
+        K_{\vec X} = \Tilde{K}_{\vec X} - (\bE \vec X)(\bE \vec X)^T
+        \]
+        \item \[
+        K_{\vec X}=\Tilde{K}_{\vec X-\bE \vec X} \quad \text{normalize the expectation to $0$}
+        \]
+    \end{itemize}
+    \item The above is the generalization of \[
+    var X = \bE (X-\bE X)^2 = \bE X^2 - (\bE X)^2
+    \] and 
+    \[
+    var(X,Y) = \bE(X - \bE X)^2
+    \] respectively.
+\end{itemize}
+\section{Gaussian Distribution}
+\begin{gbox}{{Review: symmetric, pd}}
+    \begin{itemize}
+        \item A square matrix $K$ is symmetric if $K^T=K$
+        \item An $n\times n$ matrix is positive definite if $x^TKx >0$ for all nonzero vector $x$. In 54, we know that this is equivalent to all e-vals being positive.
+    \end{itemize}
+\end{gbox}
+\begin{itemize}
+    \item $\N(\mu, \sigma^2)$: Gaussian distribution with mean $\mu$ and variance $\sigma^2$:\[
+    f(x)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp^{-\frac{(x-\mu)^2}{2\sigma^2}},\infty < x<\infty
+    \]
+    \item $\N(\vec \mu, K)$: multivariate Gaussian distribution with mean $\mu$ and covariance matrix $K$, i.e. the joint pdf of the distribution is given by \[
+    f(\vec x) = \frac{1}{(\sqrt{2\pi})^n (\det K)^{1/2}}\exp(-\frac{1}{2}(\vec x-\vec u)^TK^{-1}(\vec x-\vec \mu)), x\in \bR^n
+    \] where $K$ is a symmetric positive definite matrix (classical result).
+    \item Note that both $K$ and $K^{-1}$ are symmetric positive definite matrices.
+    \item Note that this implies that $(\vec x-\vec \mu)^TK^{-1}(\vec x-\mu)$ is always positive. 
+\end{itemize}
+\centering{Diagonalization}
+\begin{itemize}
+    \item A symmetric matrix $K$ can be diagonalized as \[
+    K=Q\Lambda Q^T
+    \] where $\Lambda$ is a diagonal matrix and $Q$ is an orthogonal matrix (i.e. $Q^{-1}=Q^T$, note $\det Q=\det Q^T=\pm 1$) (spectral thm)
+    \item \[
+    KQ = Q\Lambda
+    \] so \[
+    kq_i=\lambda_i q_i,
+    \] i.e. $q_i$ is an eigenvector of $K$ with eigenvalue $\lambda_i$
+    \item This implies that the e-vals of a psd matric are non-negative.
+\end{itemize}
+\begin{bbox}{Proposition: linear transformation of a random vector}
+    Let $\vec Y = A\vec X$, where $A$ is an $n\times n$ matrix. Then \[
+    K_{\vec Y} = AK_{\vec X}A^T
+    \]
+    and similarly \[
+    \Tilde{K}_{\vec Y} = A \Tilde{K}_{\vec X}A^T
+    \]
+    \begin{proof}
+        \begin{align*}
+            K_{\vec Y} &= \bE YY^T-(\vec E Y)(\vec E Y)^T\\
+            &= \bE(A X)(X^T A^T) - (\vec E AX)(\bE X^T A^T)\\
+            &= A\bE (XX^T)A^T - A(\bE X)(\bE X^T)A^T\\
+            &= AK_{\vec X}A^T
+        \end{align*}
+    \end{proof}
+\end{bbox}
+\begin{bbox}{Decorrelation}
+    Let $\vec Y = Q^T \vec X$ where $K_{\vec X}=Q\Lambda Q^T$. Then \[
+    K_{\vec Y} = \Lambda
+    \] i.e. \begin{itemize}
+        \item The random variables in $\vec Y$ are uncorrelated. 
+        \item $Var Y_i=\lambda_i$ for all $i$.
+    \end{itemize}
+    \begin{proof}
+        By the above proposition, \[
+        K_{\vec Y} = Q^T K_{\vec X} Q = Q^T Q\Lambda Q^T Q=\Lambda
+        \]
+        Note $cov(Y_i,Y_j)=0$ for $i\neq j$.
+    \end{proof}
+    \begin{remark}
+        As a corollary: any random vector $\vec X$ can be written as a linear transformation of an uncorrelated vector, i.e. $\vec X = Q\vec Y$ where $K_{\vec X}=Q\Lambda Q^T$.
+    \end{remark}
+\end{bbox}
+The following is a generalization of the fact that for independent RV $X$ and $Y$, we have $var(X+Y)=var X + var Y$.
+\begin{bbox}{Proposition}
+    Let $\vec X$ and $\vec Z$ be independent and $\vec Y = \vec X + \vec Z$. Then \[
+    K_{\vec Y} = K_{\vec X} + K_{\vec X}
+    \]
+\end{bbox}
+\begin{bbox}{Preservation of Energy}
+    Let $\vec Y = Q\vec X$, where $Q$ is an orthogonal matrix. Then \[
+    \bE \sum_{i=1}^n Y_i^2 = \bE \sum_{i=1}^n X_i^2
+    \]
+    \begin{proof}
+        Consider \begin{align*}
+            \sum_{i=1}^n Y_i^2 &= Y^T Y\\
+            &= X^T Q^T Q X^T\\
+            &= \sum_{i=1}^n X_i^2
+        \end{align*}
+    \end{proof}
+\end{bbox}
+\section{Definition}
+\begin{gbox}{Differential Entropy}
+    The differential entropy $h(X)$ of a continuous random variable $X$ with pdf $f(x)$ is defined as \[
+    h(X) = -\int_{S} f(x) \log f(x) dx = -\bE \log f(X)
+    \]
+\end{gbox}
+\begin{remark}
+    \begin{itemize}
+        \item Differential entropy is not a measure of the amount of information contained in a continuous r.v. despite they have similar forms. 
+        \item A continuous random variable generally contains an infinite amount of information.
+        \begin{pbox}{Example}
+    Let $X$ be uniformly distributed on $[0,1)$. Then we can write \[
+    X = 0.X_1 X_2 X_3\dots
+    \]
+    the dyadic expansion of $X$ where $X_i$ are fair bits.
+    \newline
+    Then \begin{align*}
+        H(X)&=H(X_1,X_2,X_3,\dots)\\
+        &= \sum_{i=1}^\infty H(X_i) \\
+        &= \sum_{i=1}^\infty 1\\
+        &= \infty
+    \end{align*}
+\end{pbox}
+    \end{itemize}
+\end{remark}
+\newpage
+\subsection{Relation with Discrete Entropy}
+\begin{pbox}{Relation with Discrete Entropy}
+\begin{itemize}
+    \item Consider a continuous r.v. $X$ with a continuous pdf $f(x)$.
+    \item Define a discrete r.v. $\hat X_{\Delta}$ by \[
+    \hat X_{\Delta} = i \quad \text{if $X\in[i\Delta, (i+1)\Delta]$}
+    \]
+    \item $\hat X_{\Delta}$ is called a quantization of $X$ with resolution $\Delta$
+    \item Since $f(x)$ is continuous, \[
+    p_i = \Pr\{\hat X_\Delta = i\} \approx f(x_i)\Delta
+    \] where $x_i \in [i\Delta, (i+1)\Delta]$
+    \item Then for small $\Delta$ \begin{align*}
+    H(\hat X_\Delta) &= -\sum_{i}p_i \log p_i\\
+    &\approx -\sum_{i}(f(x_i)\Delta)\log (f(x_i)\Delta)\\
+    &= -\sum_{i} (f(x_i)\Delta)(\log f(x_i)+\log \Delta)\\
+    &= -\sum_{i}[f(x_i)\log f(x_i)]\Delta - (\log \Delta)\sum_{i}f(x_i)\Delta\\
+    &\approx -\int f(x)\log f(x)dx - \log \Delta \int f(x)dx\\
+    &= h(X)-\log \Delta
+    \end{align*}
+    \item The argument above can be formalized by chasing the definition of continuity.
+\end{itemize}
+\end{pbox}
+\begin{pbox}{Example: uniform random variable}
+Let $X$ be uniformly distributed on $[0,a)$. Then \[
+h(X) = -\int_0^a \frac{1}{a}\log \frac{1}{a} dx = \log a
+\]
+\begin{remark}
+    \begin{itemize}
+        \item $h(X)<0$ if $a<1$ so $h(\cdot)$ cannot be a measure of information.
+    \end{itemize}
+\end{remark}
+\end{pbox}
+\begin{pbox}{Gaussian Distribution}
+    Let $X\sim N(0,\sigma^2)$. Then \[
+    h(X) = \frac{1}{2}\log(2\pi e \sigma^2)
+    \]
+    \begin{proof}
+        Use $e$ as the base of the logarithm. Then \begin{align*}
+            h(X) &= - \int f(x) \ln f(x)dx\\
+            &= -\int f(x) \left(-\frac{x^2}{2\sigma^2}-\ln \sqrt{2\pi\sigma^2}\right)dx\\
+            &= \frac{1}{2\sigma^2}\int x^2 f(x) dx + \ln\sqrt{2\pi\sigma^2}\int f(x)dx\\
+            &= \frac{\bE X^2}{2\sigma^2} + \frac{1}{2}\ln (2\pi \sigma^2)\\
+            &= \frac{\sigma^2 + 0}{2\sigma^2} + \frac{1}{2}\ln (2\pi \sigma^2)\\
+            &= \frac{1}{2}\ln(2\pi e \sigma^2)
+        \end{align*}
+    \end{proof}
+    Fangyuan: it's kinda like variance isn't it
+\end{pbox}
+\section{Properties of Differential Entropy}
+\begin{bbox}{Property: Invariance under Translation}
+    \[
+    h(X+c) = h(X)
+    \]    
+    \begin{proof}
+        Let $Y=X+c$. Then \[
+        f_Y(y) = f_X(y-c)
+        \] and $S_Y = \{x+c:x\in S_X\}$
+        Let $x=y-c$
+    \begin{align*}
+        h(X) &= -\int_{S_X}f_X(x)\log f_X(x)dx\\
+        &=-\int_{S_Y}f_X(y-c)\log_X(y-c)dy\\
+        &=-\int_{S_Y}f_Y(y)\log f_Y(y)dy\\
+        &= h(Y)
+    \end{align*}
+    \end{proof}
+\end{bbox}
+\begin{bbox}{Property: Scaling}
+    For $a\neq 0$, \[
+    h(aX)=h(X)+\log |a|
+    \]
+    \begin{remark}
+    The differential entropy is 
+        \begin{itemize}
+            \item increased by $\log |a|$ if $|a|>1$
+            \item decreased by $-\log|a|$ if $|a|<1$
+            \item unchanged if $a=\pm 1$
+            \item related to the "spread" of the pdf. The more spread out the pdf is, the larger the differential entropy is.
+        \end{itemize}
+    \end{remark}
+    \begin{proof}
+        Let $Y=aX$. Then\[
+        f_Y(y)=\frac{1}{|a|}f_X(\frac{y}{a})
+        \]
+        Let $x=\frac{y}{a}$.\begin{align*}
+            h(X) &= -\int_{S_X}f_X(x)\log f_X(x)dx\\
+            &=-\int_{S_Y}f_X(\frac{y}{a})\log f_X(\frac{y}{a})\frac{dy}{|a|}\\
+            &=-\int_{S_Y}\frac{1}{|a|}f_X(\frac{y}{a})\left[\log \frac{1}{|a|}f_X(\frac{y}{a})+\log |a|\right] dy\\
+            &=h(Y) - \log|a|
+        \end{align*}
+    \end{proof}
+\end{bbox}
+\section{Joint Differential Entropy, Conditional Differential Entropy and Mutual Information}
+\begin{gbox}{Joint differential entropy}
+    The joint differential entropy $h(\vec X)$ of a random vector $\vec X$ with joint pdf $f(\vec x)$ is defined as \[
+    h(\vec X) = s\int_S f(\vec x)\log f(\vec x)d\vec x =-\bE \log f(\vec X)
+    \]
+\end{gbox}
+\begin{bbox}{Proposition}
+    If $X_1,\dots, X_n$ are mutually independent, then \[
+    h(\vec X)=\sum_{i=1}^n h(X_i)
+    \]
+\end{bbox}
+\begin{bbox}{Invariance under translation}\[
+    h(\vec X+c)
+    \]
+\end{bbox}
+\begin{bbox}{Scaling}
+\[
+    h(A\vec X) = h(\vec X) + \log |\det A|
+    \]
+\end{bbox}
+
+\begin{bbox}{Theorem: Joint Differential Entropy of Multivariate Gaussian}
+   Let \( \vec{X} \sim \mathcal{N}(\vec{\mu}, K) \). Then
+    \[
+        h(\vec{X}) = \frac{1}{2} \log \left( (2 \pi e)^n \lvert K \rvert \right).
+    \]
+    \begin{proof}
+    \begin{enumerate}
+        \item Let $K$ be diagonzalized as $Q\Lambda Q^T$.
+        \item Let $\vec X = Q\vec Y$ where the components in $\vec Y$ are uncorrelated with $var Y_i=\lambda_i$, the diagonal elements of $\Lambda$
+        \item Since $\vec X$ is Gaussian, so is its linear transformation $\vec Y$.
+        \item Then the random variables in $\vec Y$ are mutually independent because they are uncorrelated.
+        \item Consider \begin{align*}
+            h(\vec X) &= h(Q\vec Y)\\
+            &= h(\vec Y) + \log|\det Q|\\
+            &= h(\vec Y) + 0\\
+            &= \sum_{i=1^n h(\vec Y_i)}\\
+            &= \sum_{i=1}^n\frac{1}{2}\log(2\pi e\lambda_i)\\
+            &=\frac{1}{2}\log\left[(2\pi e)^2\prod_i\lambda_i\right]\\
+            &= \frac{1}{2}\log\left[(2\pi 2)^n\det K\right]
+        \end{align*}
+    \end{enumerate}
+    \end{proof}
+\end{bbox}
+
+\section{Conditional Differential Entropy}
+Now we generalize the model of channel to have arbitrary input.
+\begin{gbox}{Generalized Channel}
+    The output random variable $Y$ (continuous/discrete) is related to the (general) input random variable $X$ through a conditional pdf $f(y|x)$ or conditional pmf $p(y|x)$ defined for all $x$.
+\end{gbox}
+\begin{gbox}{Conditional Differential Entropy}
+    Let $X$ and $Y$ be jointly distributed random varaibles where $Y$ is continuous and is related to $X$ through a conditional pdf $f(y|x)$ defined for all $x$. The conditional differential entropy of $Y$ given $\{X=x\}$ is defined as \[
+    h(Y|X=x) = -\int_{S_Y(x)}f(y|x)\log f(y|x)dy
+    \] and the conditional differential entropy of $Y$ given $X$ is defined as \[
+    h(Y|X) = -\int_{S_X}h(Y|X=x)dF(x) = -\bE \log h(Y|X)
+    \]
+    Again, $dF(x)$ is measure-theoretical generalization of $f(x)dx$.
+\end{gbox}
+Here is a review a basic fact.
+\begin{itemize}
+    \item If $Y$ relates to $X$ through $f(y|x)$, then $f(y)=\int f(y|x)dF(x)$. The proof uses Fubini's theorem to exchange the order of integration.
+\end{itemize}
+\section{Differential Mutual Information}
+\begin{gbox}{Mutual Information}
+    The mutual information between $X$ and $Y$ is defined as \begin{align*}
+    I(X;Y)&:=\bE \log\frac{f(Y|X)}{f(Y)} \\
+    &=\int_{S_X}\int_{S_Y} f(y|x)\log\frac{f(y|x)}{f(y)}\dd y\dd F(x)
+    \end{align*}
+    If both $X$ and $Y$ are continuous and $f(x,y)$ exists, then \[
+    I(X;Y) = \bE \log \frac{f(X,Y)}{f(X)f(Y)}
+    \]
+\end{gbox}
+\begin{gbox}{Conditional Mutual Information}
+    The mutual information between $X$ and $Y$ given $T$ is defined as \[
+    I(X;Y|T) = \int_{S_T}I(X;Y|T=t)dF(t) = \bE\log\frac{f(Y|X,T)}{f(Y|T)}
+    \]
+    where \[I(X;Y|T=t) = \int_{S_X(t)}\int_{S_Y(x,t)}f(y|x,t)\log\frac{f(y|x,t)}{f(y|t)}\dd y\dd F(x|t)
+    \]
+\end{gbox}
+\section{Interpretation of $\I(X;Y)$}
+\begin{enumerate}
+    \item Assume $f(x,y)$ exists and is continuous.
+    \item For a fixed $\Delta$, for all integer $i$ and $j$, define the intervals \[
+    A_x^i = [i\Delta, (i+1)\Delta]
+    \] on the $X$-axis and \[
+    A^j_y=[j\Delta, (j+1)\Delta]
+    \] on the $Y$-axis. Define the rectangles \[
+        A^i_x A^j_y=A^i_x\times A^j_y
+    \]
+    \item Define discrete r.v.'s \[
+    \begin{cases}
+        \hat X_\Delta = i \quad \text{if in $A^i_x$}\\
+        \hat Y_\Delta = j \quad \text{if $Y\in A^j_y$}
+    \end{cases}
+    \]
+    \item $\hat X_\Delta$ and $\hat Y_\Delta$ are called quantizations of $X$ and $Y$.
+    \item For all $i$ and $j$, pick any $(x_i, y_j)\in A^i_x \times A^j_y$.
+    \item Then \begin{align*}
+        &\I(\hat X_\Delta,\hat Y_\Delta)\\
+        &= \sum_i\sum_j \Pr\{(\hat X_\Delta, \hat Y_\Delta) = (i,j)\} \log \frac{\Pr\{(\hat X_\Delta, \hat Y_\Delta) = (i,j)\}}{\Pr\{\hat X_\Delta = i\}\Pr\{\hat Y_\Delta = j\}}\\
+        &\approx \sum_i\sum_j f(x_i, y_j)\Delta^2 \log\frac{f(x_i,y_j)\Delta^2}{f(x_i)\Delta (f(y_j)\Delta)} \quad \text{by continuity of $f_{XY}$}\\
+        &\approx \int \int f(x,y)\log\frac{f(x,y)}{f(x)f(y)}\dd x\dd y\\
+        &= I(X;Y)
+    \end{align*}
+    \item Therefore, $\I(X;Y)$ can be interpreted as the limit of $\I(\hat X_\Delta, \hat Y_\Delta)$ as the resolution $\Delta\to 0$
+\end{enumerate}
+\begin{bbox}{Proposition}
+    For two random variables $X$ and $Y$,
+    \begin{enumerate}
+        \item If $Y$ is continuous, \[
+        h(Y) = h(Y|X)+\I(X;Y)
+        \]
+        \item If $Y$ is discrete, \[
+        H(Y) = H(Y|X) + \I(X;Y)
+        \]
+    \end{enumerate}
+\end{bbox} 
+\begin{bbox}{Chain Rule}
+    The chain rule has the same form as the discrete analogue: \[
+    h(X_1,\dots,X_n)
+    \]
+\end{bbox}
+\begin{bbox}{Non-negativity of mutual information}
+    $I(X;Y)\geq 0$ with equality if and only if $X$ is independent of $Y$.
+    \begin{itemize}
+        \item Same goes to conditional mutual information.
+        \item As a corollary, conditioning does NOT increase differential entropy (natural).
+        \item As a corollary, we have independence bound for differential entropy: \[
+        h(X_1,\dots,X_n)\leq \sum_{i=1}^n h(X_i)
+        \] with equality if and only $X_i$ are mutually independent.
+    \end{itemize}
+\end{bbox}
+\section{AEP for Continuous Random Variables}
+\begin{bbox}{AEP I}
+    \[
+    -\frac{1}{n}\log f(\vec X) \to h(X)
+    \] in probability as $n\to \infty.$ i.e. for any $\epsilon > 0$, for sufficiently large $n$, we have \[
+    \Pr\{|-\frac{1}{n}\log f(\vec X)-h(X)| < \epsilon\}>1-\epsilon
+    \]
+    \begin{proof}
+        This is a consequence of the weak law of large numbers.
+    \end{proof}
+\end{bbox}
+\begin{gbox}{Typical Sequence}
+    The typical set with respect to pdf $f(x)$ is the set of sequences $\vec x$ such that \[
+    |-\frac{1}{n}\log f(\vec x) - h(X)| < \epsilon
+    \] i.e. the empirical differential entropy is close to the true differential entropy.
+\end{gbox}
+\begin{gbox}{Volume}
+    The volumn of a set $A\subset \bR^n$ is defined as \[
+    Vol(A) = \int_A d\vec x
+    \]
+\end{gbox}
+\begin{bbox}{AEP II for continuous random variables}
+    The following hold for any $\epsilon > 0$: \begin{enumerate}
+        \item If $\vec x\in W^n_{[X|]_\epsilon}$, then \[
+        2^{-n(h(X)+\epsilon)} < f(\vec x) < 2^{-n(h(\vec X)-\epsilon )}
+        \]
+        \item for sufficiently large $n$, \[
+        \Pr\{\vec X \in W^n_{[X]_\epsilon} > 1-\epsilon
+        \]
+        \item for sufficiently large $n$, \[
+         (1-\epsilon)2^{n(h(X)+\epsilon)} < Vol(W^n_{[X]_\epsilon}) < 2^{n(h(\vec X)+\epsilon )}
+        \]
+    \end{enumerate}
+    \begin{itemize}
+        \item If the differential entropy is large, then the volume of the typical set is also large.
+    \end{itemize}
+\end{bbox}
+\section{Differential Informational Divergence}
+\begin{gbox}{Information Divergence}
+    Let $f$ and $g$ be two pdf's defined on $\bR^n$ with supports $\S_f$ and $\S_g$. The information diverfence between the two distributions $f$ and $g$ is defined as \[
+    D(f||g) := \int_{\S_f} f(x)\log\frac{f(x)}{g(x)}\dd x = \bE_f \log \frac{f(X)}{g(X)}
+    \]
+    where $E_f$ is expectation with respect to the distribution $f$.
+    \begin{remark}
+        If $D(f||g)<\infty$, then \[
+        \S_f \backslash \S_g = \{x:\text{$f(x)>0$ and $g(x)=0$}\}
+        \] has zero Lebesgue measure, i.e. $S_f$ is essentially a subset of $\S_g$, except for countably many points.
+    \end{remark}
+\end{gbox}
+\begin{bbox}{Divergence Inequality} 
+    Let $f$ and $g$ be two pdf's defined on $\bR^n$. Then \[
+    D(f||g) \geq 0
+    \] with equality if and only if $f=g$ almost surely.
+\end{bbox}
+\section{Maximum Discrete Entropy Distributions}
+\begin{bbox}{Maximization of entropy}
+    Consider the problem of maximizing over all probability distributions $p$ defined on a countable subset $\S$ of the set of real numbers, subject to \[
+    \sum_{x\in\S_p}p(x)r_i(x) = a_i (=\bE_p r_i(X))
+    \] for $1\leq i\leq m$, where $\S_p\subset \S$ and $r_i(x)$ is defined for all $x\in \S$.
+    \begin{itemize}
+        \item Theorem: $p^*(x) = 2^{-\lambda_0 - \sum_{i=1}^m\lambda_i r_i(x)}$ for all $x\in \S$, where $\lambda_i$ are chosen such that the constraint on the expectation of $r_i$ are satisfied. Then $p^*$ maximizes $H(p)$ over all probability distribution $p$ on $\S$ subject to the constraints.
+        \item Let $q_i=e^{-\lambda_i}$. Then we can write \begin{align*}
+            p^*(x) &= e^{-\lambda_0} e^{-\lambda_1r_1(x)}\dots e^{-\lambda_m r_m(x)}\\
+            &= q_0 q_1^{r_1(x)}\dots q_m^{r_m(x)}
+        \end{align*}
+        where $q_0$ is called the normalization constant.
+    \end{itemize}
+    \begin{proof}
+        Consider \begin{align*}
+            &\H(p^*) - H(p)\\
+            &=-\sum_{x\in\S}p^*(x)\ln p^*(x) + \sum_{x\in S_p}p(x)\ln p(x)\\
+            &= -\sum_{x\in\S_p}p(x)\ln p^*(x) + \sum_{x\in S_p}p(x)\ln p(x) \quad \text{Non-trivial: see below}
+            &= D(p||p^*)\\
+            &\geq 0
+        \end{align*}
+        Detail: 
+        \begin{align*}
+            p^*(x) &= e^{-\lambda_0-\sum_i\lambda_i r_i(x)}\\
+            \ln p^*(x) &= -\lambda_0 - \sum_i\lambda_i r_i(x)\\
+            -\sum_{x\in \S}p^*(x)\ln p^*(x)
+            &=-\sum_{x\in \S}p^*(x)(-\lambda_0 - \sum_i\lambda_i r_i(x)) \\
+            &= -\lambda_0\sum_{x\in \S}p^*(x) + \sum_i\lambda_i \left(\sum_{x\in \S}p^*(x)r_i(x)\right)\\
+            &= \lambda_0 + \sum_i\lambda_i a_i \\
+            &= \lambda_0 \left(\sum_{x\in \S_p}p(x)\right) + \sum_i\lambda_i\left(\sum_{x\in\S_p}p(x)r_i(x)\right) \\
+            &= -\sum_{x\in \S_p}p(x)\left(-\lambda_0 - \sum_i\lambda_i r_i(x)\right)\\
+            &= -\sum_{x\in \S_p}p(x)\ln p^*(x)
+        \end{align*}
+    \end{proof}
+\end{bbox}
+\begin{pbox}{Example 2.53}
+    Let $\S= \{0,1,2,\dots\}$ and let the set of constraints be \[
+    \sum_x p(x)x=a \geq 0
+    \] 
+    Then, let $q_i=e^{-\lambda_i}$ for $i=0,1$. Then
+    \[
+    p^*(x) = e^{-\lambda_0}e^{-\lambda_1 x} = q_0 q_1^x
+    \]
+    Note that $p^*$ is then a geometric distribution, so we have \[
+    q_1 = 1-q_0
+    \]
+    Then by the constraint \[
+    q_0 = (a+1)^{-1}
+    \]
+\end{pbox}
+\section{Maximum Differential Entropy Distributions}
+\begin{bbox}{Maximizing differential entropy subject to constraints}
+    Consider the following maximization problem:
+    \begin{itemize}
+        \item Maximize $h(f)$ over all pdf $f$ defined on a subset $\S$ of $\bR^n$, subject to \[
+        \int_{\S_f}r_i(\vec x)f(\vec x)\dd \vec x = a_i (=\bE_f r_i(X))
+        \] for $1\leq i \leq m$
+     where $\S_f \subset \S$ and $r_i(\vec x)$ is defined for all $\vec x\in \S$.
+     
+     \item Theorem: Let \[
+     f^*(x)=e^{-\lambda_0 -\sum_{i=1}^m \lambda_i r_i(\vec x)}
+     \] for all $\vec x\in\S$, where $\lambda_i$ are chosen so that the constraints are satisfied. Then $f^*$ maximizes $h(f)$ over all pdf $f$ defined on $\S$, subject to the constraints.
+     \end{itemize}
+\end{bbox}
+\begin{bbox}{Upper bound on differential entropy: Gaussian}
+    Let $X$ be a continuous random variable with $\bE X^2 =\kappa$. Then \[
+    h(X) \leq \frac{1}{2}\log(2\pi e\pi\kappa),
+    \] with equality if and only if $X\sim \N(0,\kappa)$.
+    \begin{proof}
+        Consider maximizing $h(f)$ subject to the constraint \[
+        \int x^2 f(x)\dd x = \bE X^2 = \kappa
+        \]
+        Then by the above theorem, $f^*(X)=a e^{-bx^2}$, which is Gaussian distribution with zero mean.
+        \newline
+        To satisfy the constraint on the second moment, the only choices are $a$ and $b$ are:\[
+        a=\frac{1}{\sqrt{2\pi\kappa}}, b=\frac{1}{2\kappa}
+        \]
+    \end{proof}
+    \begin{remark}
+         Let $X$ be continuous random variable with mean $\mu$ and variance $\sigma^2$. Then \[
+         h(X) \leq \frac{1}{2}\log(2\pi e \sigma^2)
+         \] with equality if and only if $X\sim \N(\mu, \sigma^2)$.
+    \end{remark}
+\end{bbox}
+\section{Differential Entropy and Spread}
+\begin{itemize}
+    \item From the above theorem, we have that \[
+    h(X)\leq \frac{1}{2}\log(2\pi e\sigma^2) = \log \sigma + \frac{1}{2}\log(2\pi e)
+    \] where $\sigma^2=var X$
+    \item $h(X)$ is at most equal to the logarithm of the standard deviation (spread) plus a constant.
+    \item $h(X)\to -\infty$ as $\sigma\to 0$.
+\end{itemize}
+\begin{bbox}{Generalization of upper bound}
+    \begin{enumerate}
+        \item Let $\vec X$ be a vector of $n$ continuous random variables with correlation matrix $\hat K$. Then \begin{equation*}
+        h(\vec X) \leq \frac{1}{2}\log\left[(2\pi e)^n \det \hat K]\right]
+    \end{equation*} with equality if and only if $\vec X \sim \N(0, \hat K)$
+        \item Let $\vec X$ be a vector of $n$ continuous random variables with mean $\vec \mu$ and covariance matrix $K$. Then \begin{equation*}
+        h(\vec X) \leq \frac{1}{2}\log\left[(2\pi e)^n \det K]\right]
+    \end{equation*} with equality if and only if $\vec X \sim \N(\vec \mu, K)$
+    \end{enumerate}
+    \begin{proof}
+    \begin{enumerate}
+        \item Let $r_{ij}(\vec x)=x_ix_j$ and $\hat K=[\hat k_{ij}]$.
+        \item Then the constraints on $f(\vec x)$ are equivalent to \begin{align*}
+        &\hat k_{ij}\\
+        &=\int_{\S_f}r_{ij}(\vec x)f(\vec x)\dd \vec x\\
+        &=\int_{\S_f}x_i x_j(\vec x)f(\vec x)\dd \vec x\\
+        &=\bE X_i \bE X_j 
+        \end{align*}
+    \item By the above theorem, the joint pdf that maximizes $h(\vec X)$ has the form \[
+    f^*(\vec x)= e^{\lambda_0 - \sum_{i,j}\lambda_{i,j}x_ix_j} = e^{-\lambda_0=\vec x^T \Lambda \vec x}
+    \]
+    where $\Lambda = [\lambda_{ij}]$
+    \item $f^*$ is the joint pdf of a multivariate Gaussian distribution with zero mean.
+    \end{enumerate}
+        
+    \end{proof}
+\end{bbox}
+\end{document}

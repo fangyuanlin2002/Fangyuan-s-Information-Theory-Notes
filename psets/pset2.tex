@@ -1,0 +1,86 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+
+\section*{Problem Set 2}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+\subsection*{2.11 Entropy is concave}
+Prove that $H(p)$ is concave in $p$, i.e. for $0\leq \lambda\leq 1$,\begin{equation*}
+    \lambda H(p_1)+(1-\lambda)H(p_2)\leq H(\lambda p_1 + (1-\lambda)p_2).
+\end{equation*}
+\begin{proof}
+    \begin{align*}
+        &H(\lambda p_1 + (1-\lambda)p_2) - \lambda H(p_1)+(1-\lambda)H(p_2) \\
+        & = -\sum_x (\lambda p_1(x) + (1-\lambda)p_2(x))\log(\lambda p_1(x)+(1-\lambda)p_2(x))\\
+        &+ \lambda\sum_x p_1(x)\log p_1(x) +(1-\lambda)\sum_x p_2(x)\log p_2(x)\\
+        &= \lambda\sum_x\log(\frac{p_1(x)}{\lambda p_1(x)+(1-\lambda)p_2(x)}) +(1-\lambda)\sum_x\log(\frac{p_2(x)}{\lambda p_1(x)+(1-\lambda)p_2(x)})\\
+        &= \text{a convex combination of 2 relative entropies/KL-divergences}\\
+        &\geq 0
+    \end{align*}
+\end{proof}
+Note also that another consequence of log-sum inequality is that $D(p||q)$ is a convex function in $(p,q)$.
+\subsection*{2.12 Mutual information is convex in conditional, and concave in marginal}
+\begin{itemize}
+    \item Prove that for fixed $p(x)$, $I(X;Y)$ is a convex functional of $p(y|x)$.
+    \begin{proof}
+        \begin{align*}
+            I(X;Y)&=\sum_{x,y}p(x,y)\log\frac{p(x,y)}{p_X(x)p_Y(y)}\\
+            &=\sum_{x,y}p_X(x)p(y|x)\log\frac{p(x)p(y|x)}{p_X(x)p_Y(y)}\\
+            &=\sum_{x,y}p_X(x)p(y|x)\log\frac{p(y|x)}{p_Y(y)}
+        \end{align*}
+        Let $p(x)$ be fixed, then \begin{align*}
+            &I(\lambda p_1(y|x) + (1-\lambda)p_2(y|x))\\
+            &= \sum_{x,y}p_X(x)(\lambda p_1(y|x) + (1-\lambda)p_2(y|x))\log\frac{\lambda p_1(y|x) + (1-\lambda)p_2(y|x)}{\lambda p_1(y) + \lambda p_2(y)}\\
+            &\leq \lambda I( p_1(y|x)) + (1-\lambda)I(p_2(y|x)) \hspace{5mm} \textbf{by log-sum inequality}
+        \end{align*}
+    \end{proof}
+    \item Prove that $I(X;Y)$ is concave in $p(x)$.
+    \begin{proof}
+        \begin{align*}
+            I(X;Y)&=H(Y)-H(Y|X)\\
+            &=H(Y)-\sum_x p(x)H(Y|X=x)
+        \end{align*}
+        The second summand is linear in $p(x)$ given $p(y|x)$ are fixed. The first summand is concave in $p(y)$ and $p(y)$ is lineaer in $p(x)$ by law of total probability.
+    \end{proof}
+\end{itemize}
+\subsection*{2.15}
+Let $X$ be a function of $Y$, prove that $H(X)\leq H(Y)$. Interpret this result.
+\begin{proof}
+    \begin{align*}
+        H(Y) &= H(X,Y) + H(X|Y)\\
+        &= H(X,Y) \hspace{5mm} \text{because X is deterministic given Y}\\
+        &= H(X)+H(Y|X)\\
+        &\geq H(X)
+    \end{align*}
+    
+   This result says if we process a random variable deterministically, we cannot increase the uncertainty.
+\end{proof}
+\subsection*{2.16}
+Prove that for $n\geq 2$\begin{align*}
+    H(X_1,\dots,X_n)\geq \sum_{i=1}^{n} H(X_i|X_j,j\neq i).
+\end{align*}
+\begin{proof}
+    Proof by induction:\\
+    Base case: \begin{align*}
+        H(X_1,X_2)=H(X_1|X_2)+H(X_2|X_1)+I(X_1,X_2)
+        \geq H(X_1|X_2)+H(X_2|X_1)
+    \end{align*}
+    Inductive step:
+    \begin{align*}
+        H(X_1,\dots,X_{n+1})&=H(X_1,\dots,X_n)+H(X_{n+1}|X_1,\dots,X_n) \hspace{5mm\text{by chain rule}}\\
+        &\geq \sum_{i=1}^n H(X_i|X_j, j\neq i)+H(X_{n+1}|X_1,\dots,X_n)\\
+        &= \sum_{i=1}^{n+1} H(X_i|X_j, j\neq i)
+    \end{align*}
+\end{proof}
+\subsection*{2.17}
+Prove that $H(X_1,X_2)+H(X_2,X_3)+H(X_1,X_3)\geq 2H(X_1,X_2,X_3)$
+\begin{proof}
+    Following the hint:
+    \begin{align*}
+        &3H(X_1,X_2,X_3)\\
+        &=H(X_1,X_2)+H(X_1,X_3)+H(X_2,X_3)+H(X_1|X_2,X_3)+H(X_2|X_1,X_3)+H(X_3|X_1,X_2)\\
+        &\text{by the chain rule}\\
+        &\leq H(X_1,X_2)+H(X_1,X_3)+H(X_2,X_3)+H(X_1,X_2,X_3) \hspace{5mm}\text{by 2.16}
+    \end{align*}
+\end{proof}
+\end{document}

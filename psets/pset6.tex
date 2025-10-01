@@ -1,0 +1,76 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 6}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+
+\subsection*{6.1 Joint typicality is not transitive}
+Show that $(\vec x,\vec y)\in T_{XY_\delta}$ and $(\vec y, \vec z)\in T_{YZ_\delta}$ do not imply $(\vec x, \vec z)\in T_{XZ_\delta}$
+Consider $X,Y,Z$ uniformly distributed on the Cartesian product $\{0,1\}^3$.
+\begin{proof}
+Let $\vec x=(0,0,1,1)$, and $\vec y=(0,1,0,1)$. $\vec x$ and $\vec y$ are jointly $0$- typical because each possible tuple $(0,0), (0,1), (1,0), (1,1)$ appears exactly once. Consider $\vec z = \vec x$. $\vec y$ and $\vec z$ will be jointly $0$-typical, but in $(\vec x, \vec z)$, we only have occurrences of $(0,0) and (1,1)$.
+\end{proof}
+
+
+\subsection*{6.2}
+Let $\vec X = (X_1,\dots,X_n)$ and $X_k$ are iid with generic random variable $X$. Prove that $Pr(\vec X\in T_{X_\delta})\geq 1-\frac{|\X|^3}{n\delta^2}$ for any $n$ and $\delta >0$. 
+\newline 
+This shows that $Pr\{\vec X\in T_{X_\delta}\to 1$ as $\delta\to 0$ and $n\to \infty$ if $\sqrt{n}\delta\to \infty$
+\begin{proof}
+    \begin{align*}
+        Pr(\vec X\notin T^n_\delta) &= P\{\sum_x|\frac{1}{n}N(x;\vec x)-p(x)|>\delta\}\\
+        &\leq \sum_x P\{|\frac{1}{n}N(x;\vec x| > \frac{\delta
+        }{|\X|}\}\\
+        &\leq \sum_x\frac{Var(nI_{X_k=x}(x))}{n(\frac{\delta^2}{|\X|^2})}\\
+        &=\frac{\delta^2}{|\X|^2} \sum_xp(x)(1-p(x))\\
+        &\leq\frac{|\X|^3}{n\delta^2}
+    \end{align*}
+\end{proof}
+\subsection*{6.4 $\S$ has large probability (Tedious Algebra)}
+Prove $Pr\{S^n_{X_\delta}\}>1-\delta$.
+\begin{proof}
+First of all, if $(\vec X, \vec Y)\in T_{XY}$, then $\vec X\in S_{X}$.
+\begin{align*}
+     \sum_{x, y} |\frac{1}{n} N(x, y; x, y) - p(x, y) |\\
+     &\leq \sum_{(x,y) \in S_{XY}}| \frac{1}{n} N(x; \vec x)p(y|x) - p(x)p(y|x) + \frac{1}{n} |\\
+     &\leq \frac{|X||Y|}{n} + \sum_{(x,y) \in S_{XY}} \frac{1}{n} N(x; x) - p(x)p(y|x) \\
+     &\leq \delta
+\end{align*} for sufficiently large $n$.
+   
+
+\end{proof}
+
+\
+\subsection*{6.6 Cardinality of an intersection}
+Let $p$ be any probability distribution over a finite set $\X$ and $\eta$ be a real number in $(0,1)$. Prove that for any subset $A\subset X^n$ with $p^{A}\geq \eta$, \[
+|A\cap T^n_{X_\delta}|\geq 2^{nH(p)-\delta'} 
+\] where $\delta'\to 0$ as $\delta\to 0$ and $n\to \infty$
+\begin{proof}
+    \begin{align*}
+        &P^n(A\cap T_{X_\delta})\\
+        &= p^n(A)+p^(T)-p^n(A\cup T)\\
+        &\geq \eta + (1-\delta) - 1\\
+        &=\eta -\delta.
+    \end{align*} If a sequence $\vec \in A\cap T$ is in the intersection, then $\vec x\in T$, so by strong AEP, \[
+    p^n(\vec x)\leq 2^{-nH(p)-\psi}
+    \] where $\psi \to 0$ as $\delta\to 0$. Then \begin{align*}
+        &n-\delta\\
+        &\leq p^n(A\cap T_X)\\
+        &=\sum_{x\in A\cap T} p^n(\vec x)\\
+        &\leq |A\cap T|2^{-nH(p)-\psi}.       
+    \end{align*} Rearrange to get the desired inequality.
+\end{proof}
+
+\subsection*{6.7 Alternative definition of strong typicality}
+Strong typicality is equivalent to the \[
+V(q_x,p)\leq \delta
+\]
+This can be immediately proven by the defition of the varianal distance. 
+
+\subsection*{6.8 Combinatorial question: number of types}
+The empirical distribution $q_x$ of the sequence $\vec x$ is called the type of $\vec x$. Assuming $\X$ is finite, show that there are a total of $\binom{n+|\X|-1}{n}$ distinct types $q_x$. Hint: There are $\binom{a+b-1}{a}$ ways to distribute $a$ identical balls in $b$ boxes.
+\begin{proof}
+    \[
+    \sum_x N(x,\vec x)=n,
+    \] the length of sequence. A type is a way to distribute the number of occurrences. Consider each term in the sequence as a ball and each possible outcome as a box. There are $n$ terms in a sequence of length $n$. There are $|\X|$ possible outcomes (boxes).
+\end{proof}
+\end{document}

@@ -1,0 +1,117 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 9}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+\subsection*{8.1 Rate-distortion function for Binary information source}
+Obtain the forward channel description of $R(D)$ for the binary information source, using the Hamming distortion measure.
+\begin{proof}
+    Recall: \begin{itemize}
+        \item Suppose $\gamma \leq \frac{1}{2}$
+        \item The cross-over probability is $D.$ We think of the distortion $D$ as this cross-over probability.
+        \item $P_X(0)=1-\gamma$ and $P_X(1)=\gamma$
+        \item $\hat X^*=0$ and $D_{max}=\bE d(X,0)=P_X(1)=\gamma$
+        \item Let $P_{\hat X}(1)=\alpha$
+    \end{itemize}
+    Therefore, \begin{align*}
+        P_{\hat X, X}(0,0) &= (1-\alpha)(1-D) \\
+        P_{\hat X,X}(0,1) &= \alpha D\\
+        P_{\hat X, X} (1,0) &= (1-\alpha) D\\
+        P_{\hat X, X} (1,1) &= \alpha (1-D)
+    \end{align*}
+    The information about the transition matrix is included in the joint distribution, e.g. $P_{\hat X|X}(0,0)=\frac{(1-\alpha)(1-D)}{1-\gamma}.$
+    Observe that \[
+    (1-\alpha)(1-D) + \alpha D = 1-\gamma
+    \] so \[
+    1 - \alpha -D + 2\alpha D= 1-\gamma
+    \]
+    so \[
+    \alpha = \frac{(D-\gamma)}{(2D-1)} = \frac{\gamma - D}{1-2D}
+    \] as we have seen previously.
+\end{proof}
+
+\subsection*{8.2 Binary Covering Radius} The Hamming ball with center $\vec c = (c_1,c_2,\dots,c_n)\in \{0,1\}^n$ and radius $r$ is the set \[
+S_r(\vec c) \{\vec x \in \{0,1\}^n: \sum_{i=1}^n |x_i-c_i| \leq r\}
+\]
+Let $M_{r,n}$ be the minimum number $M$ such that there exists Hamming balls $S_r(\vec c_j)$, $j=1,2,\dots,M$ such that for all $\vec x \in \{0,1\}^n$, $\vec x\in S_r(\vec c_j)$ for some $j.$ \begin{enumerate}
+    \item Show that \[
+    M_{r,n} \geq \frac{2^n}{\sum_{k=0}^r \binom{n}{k}}
+    \]
+    \begin{proof}
+        For a vector to be inside a Hamming ball of radius $r$, it has at most r bits that are different from those of $\vec c$. So \[
+        |S_r(\vec c)|=\sum_{i=0}^r \binom{n}{i}
+        \]
+        By the definition of $M_{r,n},$ \[
+        \bigcup_{j=1}^{M_{r,n}} S_r(\vec c_j) = \{0,1\}^n
+        \]
+        Then \begin{align*}
+            |\{0,1\}|=2^n &= |\bigcup_{j=1}^{M_{r,n}} S_r(\vec c_j)|\\
+            &\leq \sum_{j=1}^{M_{r,n}}|S_r(\vec c_j)|\\
+            &= M_{r,n} \sum_{k=0}^n\binom{n}{k}
+        \end{align*}
+    \end{proof}
+    \item What is the relation between $M_{r,n}$ and the rate-distortion function for the binary source with the Hamming distortion measure?
+    \begin{proof}
+    Let $r = \lfloor nD\rfloor$, where $0\leq D\leq 1,$ and let $\mathcal{C}=\{\vec c_j, 1\leq j\leq M_{r,n}\}\subset \{0,1\}^n$ such that for each binary string of length $n$, there is some center $\in \mathcal{C}$ that is at most $\lfloor nD\rfloor$ away from that center. $\mathcal{C}$ is used as a rate-distortion code as follows: for every $\vec x\in \{0,1\}^n$, map $\vec x$ to $\vec{\hat x}\in \mathcal{C}$ which is closest to $\vec x$ in Hamming distance. We have that 
+    \[
+        \sum_{i=1}^n|x_i-\hat x_i| \leq \lfloor nD\rfloor
+    \]
+    Note that \[
+    d(\vec x, \vec{\hat x}) \leq \frac{\lfloor nD\rfloor}{n} \leq D
+    \] and the rate of this code $\frac{1}{n}\log M_{\lfloor nD\rfloor, n}$
+    \end{proof}
+\end{enumerate}
+
+\subsection*{8.3 Lower bound on rate-distortion function}
+Consider a source random variable $X$ with the Hamming distortion measure.
+\begin{enumerate}
+    \item Prove that \[
+    R(D)\geq H(X) - D\log (|\X|-1)-h_b(D)
+    \] for $0\leq D\leq D_{max}$
+    \begin{proof}
+        \[
+        R(D) = \min_{\hat X:\bE d(X,\hat X)} I(X;\vec X).
+        \]
+        Let $\hat X$ achieves an expected distortion of $D$, then \[
+        I(X;\hat X) = H(X) - H(X|\hat X) \geq H(X) - (h_b(D)+D\log(|\X|-1))
+        \] by Fano's inequality. Therefore, \[
+        R(D) \geq H(X) - D\log(|\X|-1)-h_b(D).
+        \]
+    \end{proof}
+    \item Show that the above lower bound on $R(D)$ is tight if $X$ is uniformly distributed on $\X.$
+    \begin{proof}
+        The lower bound is tight if and only if Fano's inequality is tight. 
+        \newline
+        We want \[
+        H(X|\hat X) = h_b(D)+D\log(|\X|-1)
+        \]
+        To arrange this, we can let \[
+        p(x|\hat x) =\begin{cases}
+            1- D \quad \text{if $x=\hat x$}\\
+            \frac{D}{|\X|-1} \quad \text{if $x\neq \hat x$}
+        \end{cases}
+        \] where $\hat X$ is uniformly distributed. 
+        Fangyuan: To verify:
+        \begin{align*}
+            H(X|\hat X) &= (1-D)\log (1-D) + (|\X|-1)\frac{D}{|\X|-1}\log \frac{D}{|\X|-1}\\
+            &=(1-D)\log (1-D) + D\log\frac{D}{|\X|-1}\\
+            &=(1-D)\log (1-D) + D\log (|\X|-1) + D\log D\\
+            &= h_b(D) + D\log(|\X|-1)
+        \end{align*}
+        $X$ is then also uniformly distributed.
+        Then \[\bE d(X,\hat X)=P(X\neq \hat X) =1-(1-D)= D.\]
+    \end{proof}
+\end{enumerate}
+
+\subsection*{8.5 Compound Source}
+Let $\Theta$ be an index set and $\mathcal{Z}_{\Theta}=\{X_{\theta}: \theta \in \Theta\}$ be a collection of source random variables. The random variables in $\mathcal{Z}_\Theta$ have a common source alphabet $\X,$ a common reproduction alphabet $\hat \X$, and a common distortion measure $d.$ A compound source is an i.i.d. information source whose generic random variable is $X_{\Phi},$ where $\Phi$ is equal to some $\theta \in \Theta$ but we do not know exactly which one it is. The rate-distortion function $R_{\Phi}(D)$ for $X_\Phi$ has the same definition as the rate-distortion function defined previously except that the condition on distortion is replaced by \[
+\Pr\{d(\vec X_\theta, \vec{\hat X}) > D+\epsilon\} \leq \epsilon
+\] for all $\theta \in \Theta.$
+Show that \[
+R_\Theta(D) = \sup_{\theta\in \Theta}R_{\theta}(D),
+\] where $R_\theta(D)$ is the rate-distortion function for $X_\theta.$
+\begin{proof}
+    Note that $R_\Theta(D)\geq R_{\theta}(D)$ by definition. Then we only need to show that $\sup_{\theta\in \Theta}R_{\theta}(D)$ is achievable. Let $\theta$ denote the actual source chosen and $\vec X$ be the sequence generated. We construct the coding scheme as follows:
+    \newline
+    we first encode the empirical distribution, and then if $\vec X$ is typical with respect to some $\theta,$ we can achieve the desired rate by the rate-distortion theorem. Otherwise, we reproduce $\vec X$ using a constant sequence, with the average distortion upper bounded by $d_{max}.$
+\end{proof}
+\end{document}

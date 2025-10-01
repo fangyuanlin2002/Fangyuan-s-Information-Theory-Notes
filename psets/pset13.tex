@@ -1,0 +1,40 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section*{Problem Set 13}
+    Name: Fangyuan Lin, UC Berkeley, Class of 2024
+
+\subsection*{11.2 Concavity of Differential Mutual Information}
+Let $X$ and $Y$ be two jointly distributed random variables where $X$ is general and $Y$ is continuous. $Y$ is related to $X$ through a conditional pdf $f(y|x)$ defined for all $x$. Prove that $\I(X;Y)$ is concave in $F(x)$
+\begin{proof}
+    Note that we can also approach this problem through quantization of the random variables.
+    \begin{enumerate}
+        \item Note that \[
+        I(X;Y) = h(Y)-h(Y|X)
+        \]
+        \item $h(Y)$ is concave in $f(y)$ and $f(y)=\bE_{F(x)}f(y|x)$ is linear in $F(x)$.
+        \item $h(Y|X)$ is linear in $F(x)$
+    \end{enumerate}
+\end{proof}
+\subsection*{11.3 Lower bound on the probability of independent sequences being jointly typical}
+    Let $(\vec{X'},\vec{Y'})$ be i.i.d. copies of a pair of generic random variables $(X',Y')$ where $X'$ and $Y'$ are independent. Prove that \[
+    \Pr\{(\vec{X'},\vec{Y'})\in\Psi^n_{[XY]_\delta}\} \geq (1-\delta)2^{-n(I(X;Y)-\delta)}
+    \] for sufficiently large $n$.
+\begin{proof}
+    By the "AEP," for sufficiently large $n$, we have \begin{align*}
+        1-\delta &\leq \Pr\{(\vec X,\vec Y)\in \Psi^n_{[XY]_\delta}\} \text{here $X$ and $Y$ not forced to be independent}\\
+        &=\int\int_{\Psi}f(\vec y|\vec x)\dd F()\vec x\dd \vec y \\
+        &\leq 2^{n(I(X;Y)+\delta)}\int\int_\Psi f(\vec y)\dd F(\vec x)\dd \vec y \quad \text{by definition of mutual typicality}\\
+        &=  2^{n(I(X;Y)+\delta)} \Pr\{(\vec X',\vec Y')\in \Psi^n_{[XY]_\delta}\} \quad\text{since the measure is now in product form!}
+    \end{align*}
+\end{proof}
+\subsection*{11.4}
+Show that the capacity of a continuous memoryless channel is not changed is the input cost constraint is replaced by \begin{align*}
+    \bE\left[\frac{1}{n}\sum_{i=1}^n\kappa(x_i(W))\right]  \leq P
+\end{align*}
+i.e. now the average input cost constraint is enforced on the average by a randomly selected codeword instead of by every codeword.
+\begin{proof}
+    This new constraint is weaker, so the achievability of the rate below capacity is unchanged. If a rate is achievable, as we prove it's upper bounded by the $C(P)$, we want \[
+    \bE \left[\frac{1}{n}\sum_{i=1}^n\kappa(X_i)\right]\leq P,
+    \] which only needs the average input constraint to be satisfied on by a randomly selected codeword.
+\end{proof}
+\end{document}
